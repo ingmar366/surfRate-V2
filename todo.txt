@@ -1,0 +1,9 @@
+1) display sessions on click spots
+2) create new sessions 
+3) upload sessions to data
+4) create new spots
+5) uploading spot data
+6) make API to save the data 
+7) make api (stormglass intergrate) 
+8) ready deployment 
+option to create new spot

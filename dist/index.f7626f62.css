@@ -1,0 +1,261 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  font-size: 62.5%;
+  overflow-y: auto;
+}
+
+body {
+  min-height: 100%;
+  background-color: #fef1d9;
+}
+
+.surf-spot {
+  color: #555;
+  height: 6rem;
+  background-color: #cee5d0;
+  border-radius: .3rem;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-left: 2rem;
+  margin-right: .5rem;
+  padding: 1rem;
+  font-size: 1rem;
+  display: grid;
+}
+
+.surf-spot:hover, .surf-spot:active {
+  color: #fff;
+  background-color: #cee5d080;
+}
+
+.spot-popup {
+  background-color: #000;
+}
+
+.sessions {
+  height: 22rem;
+  max-height: 70%;
+  z-index: 100;
+  background-color: #212121;
+  grid-area: 2 / 2;
+  grid-template-rows: 1fr 5fr;
+  align-self: end;
+  display: grid;
+  overflow: hidden;
+  transform: translateY(1%);
+}
+
+.sessions__sessions {
+  overflow-y: auto;
+}
+
+.sessions__sessions::-webkit-scrollbar {
+  width: .5rem;
+}
+
+.sessions__sessions::-webkit-scrollbar-track {
+  background-color: #555;
+}
+
+.sessions__sessions::-webkit-scrollbar-thumb {
+  background-color: #cee5d0;
+  border-radius: .3rem;
+}
+
+.sessions__item {
+  background-color: #cee5d0;
+  border-radius: .3rem;
+  grid-template-rows: 1fr 2fr 2fr 2fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin: .5rem 1rem;
+  padding: 1rem 2rem;
+  display: grid;
+}
+
+.sessions__item-date {
+  grid-area: 1 / 1 / auto / -1;
+}
+
+.sessions__item-clean, .sessions__item-overal, .sessions__item-strength {
+  grid-row: 2;
+}
+
+.sessions__item-waveheight, .sessions__item-swellheight, .sessions__item-wind, .sessions__item-direction {
+  grid-row: 3;
+  align-self: center;
+}
+
+.sessions__item-image {
+  grid-area: 4 / 1;
+}
+
+.sessions__item-description {
+  grid-area: 4 / 2 / auto / -1;
+}
+
+.rating {
+  width: 6rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  display: grid;
+}
+
+.rating li {
+  list-style-type: none;
+}
+
+.rating-item {
+  cursor: pointer;
+  color: #f8b60f;
+  font-size: 1.6em;
+}
+
+.rating-item:before {
+  content: "★";
+}
+
+.rating-item.active ~ .rating-item:before {
+  content: "☆";
+}
+
+.rating-itemhover ~ .rating-item:before {
+  content: "★";
+}
+
+.rating-item:hover ~ .rating-item:before {
+  content: "☆";
+}
+
+.button:active, .button:link {
+  background-color: #cee5d0;
+  border-radius: .3rem;
+  padding: .5rem 2rem;
+  text-decoration: none;
+  position: absolute;
+}
+
+.new__session {
+  background-color: #cee5d0;
+  border-radius: .3rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  place-items: center;
+  gap: 1rem;
+  margin: 1rem;
+  padding: 2rem 3rem;
+  display: grid;
+}
+
+.new__session-image {
+  align-items: center;
+  display: flex;
+}
+
+.new__session-image h5 {
+  margin-bottom: .5rem;
+}
+
+.new__session-description {
+  align-items: center;
+  display: flex;
+}
+
+.new__session-button {
+  width: 100%;
+  background-color: #53a8c7d7;
+  border: 1px solid #000;
+  border-radius: .3rem;
+  grid-area: 3 / 1 / auto / -1;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  background-color: #53a8c7d7;
+  border: 1px solid #000;
+  border-radius: .3rem;
+  padding: .2rem 1rem;
+}
+
+.sessions__spotname {
+  color: #f5f5f5;
+  place-self: center;
+  text-decoration: underline;
+}
+
+.sessions__item {
+  font-size: 1.4rem;
+}
+
+.button {
+  text-transform: uppercase;
+  color: #555;
+  font-size: 1.6rem;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.interface {
+  width: 90vw;
+  max-width: 130rem;
+  height: 90vh;
+  max-height: 80rem;
+  z-index: -1;
+  background-color: #212121;
+  border: .3rem solid #212121;
+  grid-template-rows: 3fr 12fr 1fr;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+  display: grid;
+  position: relative;
+}
+
+.interface__surfspots {
+  grid-area: 2 / 1;
+  gap: 1rem;
+  display: grid;
+  position: relative;
+  overflow: auto;
+}
+
+.interface__surfspots::-webkit-scrollbar {
+  width: .5rem;
+}
+
+.interface__surfspots::-webkit-scrollbar-track {
+  background-color: #555;
+}
+
+.interface__surfspots::-webkit-scrollbar-thumb {
+  background-color: #cee5d0;
+  border-radius: .3rem;
+}
+
+.interface__map {
+  z-index: 0;
+  grid-area: 1 / 2 / -2;
+}
+
+.interface__markup {
+  grid-area: 3 / 1 / auto / -1;
+}
+
+.button__new-session {
+  position: absolute;
+  bottom: .5%;
+  right: 1%;
+}
+
+/*# sourceMappingURL=index.f7626f62.css.map */

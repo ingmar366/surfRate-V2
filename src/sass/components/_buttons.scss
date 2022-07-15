@@ -1,0 +1,8 @@
+.button:active,
+.button:link {
+  background-color: $color-green;
+  padding: 0.5rem 2rem;
+  text-decoration: none;
+  border-radius: $border-radius;
+  position: absolute;
+}

@@ -1,0 +1,22 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "website setup v2",
+  "main": "main.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --dist-dir ./dist"
+  },
+  "author": "Ingmar meijer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ingmar366/website-v2/issues"
+  },
+  "dependencies": {
+    "leaflet": "^1.8.0",
+    "parcel": "^2.6.0"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.6.0"
+  }
+}

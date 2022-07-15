@@ -1,0 +1,18 @@
+.sessions {
+  &__spotname {
+    justify-self: center;
+    align-self: center;
+    color: whitesmoke;
+    text-decoration: underline;
+  }
+
+  &__item {
+    font-size: 1.4rem;
+  }
+}
+
+.button {
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  color: #555;
+}

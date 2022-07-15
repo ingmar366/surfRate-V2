@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Surf-Rate</title>
+        <link rel="stylesheet" href="src/sass/main.scss">
+        <link rel=" stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin="" />
+        <script defer src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+
+
+
+        <script type="module" defer src="./src/js/controller.js"></script>
+    </head>
+
+    <body>
+
+        <div class="center">
+            <article class="interface">
+                <!-- <img class="logo" src="logo-SurfRate.png" alt="SurfRate-Logo"> -->
+                <div class="interface__surfspots">
+                </div>
+                <div id="map" class="interface__map">
+                </div>
+                <div class="sessions">
+                    <h3 class="sessions__spotname">Dunbar</h3>
+                    <div class="sessions__sessions">
+                        <form class="new__session">
+                            <div>
+                                <label for="date">Date: </label>
+                                <input class="new__session-date" id="date" type="date">
+                            </div>
+                            <!-- FORM ADDING NEW SESSIONS(STILL UNDER CONSTRUCTION) -->
+                            <!-- <div class="new__session-strength">
+                                <h5 class="new__session-rating-header">Strength</h5>
+                                <ul class="rating">
+                                    <li class="rating-item rating-strength active" data-rate="1"></li>
+                                    <li class="rating-item rating-strength" data-rate="2"></li>
+                                    <li class="rating-item rating-strength" data-rate="3"></li>
+                                    <li class="rating-item rating-strength" data-rate="4"></li>
+                                    <li class="rating-item rating-strength" data-rate="5"></li>
+
+                                </ul>
+                            </div>
+                            <div class="new__session-clean">
+                                <h5 class="new__session-rating-header">Clean</h5>
+                                <ul class="rating">
+                                    <li class="rating-item rating-clean" data-rate="1"></li>
+                                    <li class="rating-item rating-clean" data-rate="2"></li>
+                                    <li class="rating-item rating-clean" data-rate="3"></li>
+                                    <li class="rating-item rating-clean" data-rate="4"></li>
+                                    <li class="rating-item rating-clean" data-rate="5"></li>
+
+                                </ul>
+                            </div>
+                            <div class="new__session-overal">
+                                <h5 class="new__session-rating-header">Overal</h5>
+                                <ul class="rating">
+                                    <li class="rating-item rating-condition" data-rate="1"></li>
+                                    <li class="rating-item rating-condition" data-rate="2"></li>
+                                    <li class="rating-item rating-condition" data-rate="3"></li>
+                                    <li class="rating-item rating-condition" data-rate="4"></li>
+                                    <li class="rating-item rating-condition" data-rate="5"></li>
+
+                                </ul>
+                            </div>
+
+                            <div class="new__session-image ">
+                                <h5>Picture:</h5>
+                                <label for="image-upload" class="custom-file-upload ">Select Image</label>
+                                <input class="image-upload" id="image-upload" type="file" accept="image/*" name="image"
+                                    value="search">
+                            </div>
+
+                            <div class="new__session-description">
+                                <h5>Description: </h5>
+                                <input class="new__session-description " type="text" name="" id="">
+                            </div>
+
+                            <button class="new__session-button ">Add Session</button>
+                        </form> -->
+
+
+
+                            <!-- INFO PER SESSION
+                            (STILL UNDER CONSTRUCTION) -->
+
+                            <!-- <div class="sessions__item">
+                            <h4 class="sessions__item-date">01/01/2022</h4>
+                            <div class="sessions__item-strength">
+                                <h5 class="sessions__item-rating-header">Strength</h5>
+                                <ul class="rating">
+                                    <li class="rating-item rating-strength active" data-rate="1"></li>
+                                    <li class="rating-item rating-strength" data-rate="2"></li>
+                                    <li class="rating-item rating-strength" data-rate="3"></li>
+                                    <li class="rating-item rating-strength" data-rate="4"></li>
+                                    <li class="rating-item rating-strength" data-rate="5"></li>
+
+                                </ul>
+                            </div>
+                            <div class="sessions__item-clean">
+                                <h5 class="sessions__item-rating-header">Clean</h5>
+                                <ul class="rating">
+                                    <li class="rating-item rating-clean" data-rate="1"></li>
+                                    <li class="rating-item rating-clean" data-rate="2"></li>
+                                    <li class="rating-item rating-clean" data-rate="3"></li>
+                                    <li class="rating-item rating-clean" data-rate="4"></li>
+                                    <li class="rating-item rating-clean" data-rate="5"></li>
+
+                                </ul>
+                            </div>
+                            <div class="sessions__item-overal">
+                                <h5 class="sessions__item-rating-header">Overal</h5>
+                                <ul class="rating">
+                                    <li class="rating-item rating-condition" data-rate="1"></li>
+                                    <li class="rating-item rating-condition" data-rate="2"></li>
+                                    <li class="rating-item rating-condition" data-rate="3"></li>
+                                    <li class="rating-item rating-condition" data-rate="4"></li>
+                                    <li class="rating-item rating-condition" data-rate="5"></li>
+
+                                </ul>
+                            </div>
+                            <h5 class="sessions__item-waveheight toggeling">Waveheight:..</h5>
+                            <h5 class="sessions__item-swellheight toggeling">SwellHeight:..</h5>
+                            <h5 class="sessions__item-wind toggeling">Wind:..</h5>
+                            <h5 class="sessions__item-direction toggeling">WindDirection:..</h5>
+
+                            <div class="sessions__item-image toggeling">
+                                <h5>Picture:</h5>
+                                <a href="">Image Session</a>
+                            </div>
+
+                            <h5 class="sessions__item-description toggeling">Description: Lorem ipsum dolor
+                                sit amet
+                                consectetur
+                                adipisicing elit. Eaque rem dignissimos, nostrum tempora sint odio, ducimus
+                                alias
+                                accusantium minus cum voluptas, laboriosam suscipit amet atque. Nemo tenetur
+                                similique nam?
+                                Ratione.</h5>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="interface__markup">
+                    <a href="" class="button button__new-session">New Session</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- <div class="modal hidden">
+            <div class="new-spot hidden">
+                <label for="input-name">Spot Name:</label>
+                <input id="input-name" class="input input-name" type="text" placeholder="Pipeline">
+                <label for="input-location">Location:</label>
+                <input type="text" id="input-location" class="input input-location" placeholder="Zandvoort">
+                <label for="input-direction">Direction:</label>
+                <input type="text" id="input-direction" class="input input-direction" placeholder="North">
+                <button class="btn btn__new-spot-submit">Submit</button>
+            </div>
+        </div> -->
+
+        <div class="overlay hidden"></div>
+    </body>
+
+</html>
