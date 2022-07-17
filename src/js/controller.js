@@ -1,27 +1,57 @@
 import * as model from "./model";
 import spotView from "./views/spotView";
 import mapView from "./views/mapView";
+import sessionView from "./views/sessionView";
 
 ////////////////////////////////////////////////////////////////// display spots /////////////////
+
+// call functions to show session menu and the sessions
+const displaySessions = function (selectedSpot) {
+  sessionView.showContainer();
+  sessionView.loadSpots(selectedSpot);
+};
 
 // make it possible to click on a spot and moving the map to the spot location.
 const moveMapToSpot = function (e) {
   //checking if the selected item is a spot
   if (e.path[1].className !== `surf-spot`) return;
-  // get data out of the selected item so it can be linked to a spot
+  // get the id number out of selected item
   const selectedSpotNumber = Number(e.path[1].dataset.id) + 1;
 
-  //call the move to location so the mapp will be changed
-  mapView.setMapToLocation(model.data.surfspot[`spot${selectedSpotNumber}`]);
+  const modelSpot = model.data.surfspot[`spot${selectedSpotNumber}`];
+  //set map to location
+  mapView.setMapToLocation(modelSpot);
+
+  //open corresponding popup
+  mapView.openMarker(`spot${selectedSpotNumber - 1}`);
+
+  //show graphic selected spot
+  spotView.activeSpot(e.target);
+
+  // display the session window and show all the sessions
+  displaySessions(modelSpot);
 };
 
+// get classname out of the marker to show graphic selected spot
+const markerClickHandler = function (e) {
+  const markerSpot = e.target._popup.options.className.slice(-1);
+  spotView.activeSpot(markerSpot);
+  //show the sessions connected with the spot
+  displaySessions(model.data.surfspot[`spot${+markerSpot + 1}`]);
+};
+
+const sessionClick = function (e) {
+  sessionView.toggleLongSessionDescription(e.target);
+};
+
+// enable basic functionality at start of app
 const init = async function () {
   try {
     spotView.displaySpots(model.data);
     spotView.addHandlerClick(moveMapToSpot);
     await mapView.setupMap();
-    mapView.displayMarkers(model.data);
-    // mapView.addhandlerClickMap(getClickLocation);
+    mapView.displayMarkers(model.data, markerClickHandler);
+    sessionView.clickHandlerSession(sessionClick);
   } catch (err) {
     console.log(err.message);
   }

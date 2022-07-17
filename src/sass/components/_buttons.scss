@@ -1,5 +1,6 @@
 .button:active,
 .button:link {
+  z-index: 1000;
   background-color: $color-green;
   padding: 0.5rem 2rem;
   text-decoration: none;

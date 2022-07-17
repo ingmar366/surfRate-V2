@@ -4,15 +4,15 @@ class SpotView {
 
   displaySpots(spot) {
     // inserting html for every spot that is selected
-    Object.entries(spot.surfspot).forEach((i, ind) => {
+    Object.entries(spot.surfspot).forEach((_, ind) => {
       const spotStr = `spot` + (ind + 1);
       this.#spotContainer.insertAdjacentHTML(
         `beforeend`,
-        `<form class="surf-spot" action="" data-id="${ind}">
+        `<div class="surf-spot" action="" data-id="${ind}">
         <h3 class="form__spot-name">Name: 
         ${spot.surfspot[spotStr].name}</h3>
         <h3 class="form__spot-location">Location: ${spot.surfspot[spotStr].location.name}</h3>
-        </form>`
+        </div>`
       );
     });
   }
@@ -20,6 +20,20 @@ class SpotView {
   //adding handler function to the clicks in the spot menu
   addHandlerClick(handler) {
     this.#spotContainer.addEventListener(`click`, handler);
+  }
+
+  activeSpot(spot) {
+    const allSpots = document.querySelectorAll(`.surf-spot`);
+    allSpots.forEach((s) => s.classList.remove("surf-spot-active"));
+
+    if (typeof spot === "string") {
+      const selectedSpot = Array.from(allSpots).filter((spotItem) => {
+        if (spotItem.dataset.id == spot) return spotItem;
+      });
+      console.log(selectedSpot[0].classList.add("surf-spot-active"));
+      return;
+    }
+    spot.closest(`.surf-spot`).classList.add("surf-spot-active");
   }
 }
 

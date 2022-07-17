@@ -1,6 +1,7 @@
 class MapView {
   #map;
   #mapZoomlevel = 12;
+  #allMapObjects;
 
   #clearMap() {
     if (this.#map != undefined) {
@@ -36,24 +37,27 @@ class MapView {
       L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.#map);
+      })
+        .addTo(this.#map)
+        .on(`click`, this.popupClickHandler);
     });
   }
 
   // displaying all the surfspots that are currently in the data obj
-  displayMarkers(surfspots) {
+  displayMarkers(surfspots, clickHandler) {
     const arrSpots = Object.entries(surfspots.surfspot);
     arrSpots.forEach((i, ind) => {
       const curLat = i[1].location.lat;
       const curLng = i[1].location.long;
       L.marker([curLat, curLng])
+        .on("click", clickHandler)
         .addTo(this.#map)
         .bindPopup(
           L.popup({
             maxWidth: 250,
             minWidth: 150,
-            autoClose: false,
-            class: `spot-popup spot${ind}`,
+            autoClose: true,
+            className: `spot-popup spot${ind}`,
             closeOnClick: false,
           })
         )
@@ -73,6 +77,16 @@ class MapView {
   addhandlerClickMap(handler) {
     // add eventhanlder click on the map
     this.#map.on(`click`, handler);
+  }
+
+  //open the marker that has the same classname as the currentSpot input
+  openMarker(currentSpot) {
+    Object.entries(this.#map._layers).forEach((layer) => {
+      const marker = layer[1].dragging;
+      if (!marker) return; //checking if marker has a value
+      if (marker._marker._popup.options.className.slice(-5) === currentSpot)
+        marker._marker.openPopup(); // selecting the one that has the same classname and opens the popup from this marker
+    });
   }
 
   getMarkerPosition(mapE) {

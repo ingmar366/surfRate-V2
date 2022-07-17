@@ -13,12 +13,9 @@
   border-radius: $border-radius;
 
   &:hover,
-  &:active {
+  &:active,
+  &-active {
     background-color: $color-green-dark;
     color: white;
   }
-}
-
-.spot-popup {
-  background-color: black;
 }

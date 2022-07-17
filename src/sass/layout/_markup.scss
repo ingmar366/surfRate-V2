@@ -1,5 +1,16 @@
+.interface__markup {
+  position: relative;
+}
 .button__new-session {
   right: 1%;
   position: absolute;
-  bottom: 0.5%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.button__new-spot {
+  left: 11%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }

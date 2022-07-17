@@ -30,13 +30,9 @@ body {
   display: grid;
 }
 
-.surf-spot:hover, .surf-spot:active {
+.surf-spot:hover, .surf-spot:active, .surf-spot-active {
   color: #fff;
   background-color: #cee5d080;
-}
-
-.spot-popup {
-  background-color: #000;
 }
 
 .sessions {
@@ -47,32 +43,25 @@ body {
   grid-area: 2 / 2;
   grid-template-rows: 1fr 5fr;
   align-self: end;
+  transition: all .5s;
   display: grid;
-  overflow: hidden;
-  transform: translateY(1%);
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform: translateY(100%);
 }
 
 .sessions__sessions {
-  overflow-y: auto;
+  margin-top: 1rem;
 }
 
-.sessions__sessions::-webkit-scrollbar {
-  width: .5rem;
-}
-
-.sessions__sessions::-webkit-scrollbar-track {
-  background-color: #555;
-}
-
-.sessions__sessions::-webkit-scrollbar-thumb {
-  background-color: #cee5d0;
-  border-radius: .3rem;
+.sessions::-webkit-scrollbar {
+  display: none;
 }
 
 .sessions__item {
   background-color: #cee5d0;
   border-radius: .3rem;
-  grid-template-rows: 1fr 2fr 2fr 2fr;
+  grid-template-rows: 1fr 2fr;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   margin: .5rem 1rem;
   padding: 1rem 2rem;
@@ -88,16 +77,37 @@ body {
 }
 
 .sessions__item-waveheight, .sessions__item-swellheight, .sessions__item-wind, .sessions__item-direction {
-  grid-row: 3;
+  grid-row: 1;
   align-self: center;
 }
 
 .sessions__item-image {
-  grid-area: 4 / 1;
+  grid-area: 2 / 1;
 }
 
 .sessions__item-description {
-  grid-area: 4 / 2 / auto / -1;
+  grid-area: 2 / 2 / auto / -1;
+}
+
+.sessions__item-extra {
+  grid-area: 3 / 1 / -1 / -1;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  display: grid;
+}
+
+.sessions__no-session {
+  text-align: center;
+  color: #fff;
+  font-size: 2.2rem;
+}
+
+.toggeling {
+  display: none;
+}
+
+.four-rows {
+  grid-template-rows: 1fr 2fr 2fr 2fr;
 }
 
 .rating {
@@ -111,7 +121,6 @@ body {
 }
 
 .rating-item {
-  cursor: pointer;
   color: #f8b60f;
   font-size: 1.6em;
 }
@@ -124,15 +133,8 @@ body {
   content: "☆";
 }
 
-.rating-itemhover ~ .rating-item:before {
-  content: "★";
-}
-
-.rating-item:hover ~ .rating-item:before {
-  content: "☆";
-}
-
 .button:active, .button:link {
+  z-index: 1000;
   background-color: #cee5d0;
   border-radius: .3rem;
   padding: .5rem 2rem;
@@ -187,6 +189,8 @@ input[type="file"] {
 .sessions__spotname {
   color: #f5f5f5;
   place-self: center;
+  margin-top: 10px;
+  font-size: 1.6rem;
   text-decoration: underline;
 }
 
@@ -215,11 +219,20 @@ input[type="file"] {
   z-index: -1;
   background-color: #212121;
   border: .3rem solid #212121;
+  border-radius: .3rem;
   grid-template-rows: 3fr 12fr 1fr;
   grid-template-columns: 1fr 2fr;
   gap: 1rem;
   display: grid;
   position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 5px #000000bf;
+}
+
+.interface .logo {
+  width: 35%;
+  place-self: center;
+  padding: 1rem 0;
 }
 
 .interface__surfspots {
@@ -250,12 +263,21 @@ input[type="file"] {
 
 .interface__markup {
   grid-area: 3 / 1 / auto / -1;
+  position: relative;
 }
 
 .button__new-session {
   position: absolute;
-  bottom: .5%;
+  top: 50%;
   right: 1%;
+  transform: translateY(-50%);
+}
+
+.button__new-spot {
+  position: absolute;
+  top: 50%;
+  left: 11%;
+  transform: translateY(-50%);
 }
 
 /*# sourceMappingURL=index.f7626f62.css.map */

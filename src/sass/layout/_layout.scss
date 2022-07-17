@@ -18,8 +18,16 @@
   gap: 1rem;
   border: 0.3rem solid $color-background;
   z-index: -1;
+  overflow: hidden;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.75);
 
-  // transform: translate(50%, -50%);
+  .logo {
+    width: 35%;
+    align-self: center;
+    justify-self: center;
+    padding: 1rem 0;
+  }
 
   &__surfspots {
     position: relative;

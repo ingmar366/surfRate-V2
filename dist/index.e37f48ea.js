@@ -509,32 +509,66 @@ var _spotView = require("./views/spotView");
 var _spotViewDefault = parcelHelpers.interopDefault(_spotView);
 var _mapView = require("./views/mapView");
 var _mapViewDefault = parcelHelpers.interopDefault(_mapView);
+var _sessionView = require("./views/sessionView");
+var _sessionViewDefault = parcelHelpers.interopDefault(_sessionView);
 ////////////////////////////////////////////////////////////////// display spots /////////////////
-const getClickLocation = function(e) {
-    const latlng = (0, _mapViewDefault.default).getMarkerPosition(e);
-    _model.data.curClickedLocation = latlng;
-// new popup with the possibility to add a new spot
+// call functions to show session menu and the sessions
+const displaySessions = function(selectedSpot) {
+    (0, _sessionViewDefault.default).showContainer();
+    (0, _sessionViewDefault.default).loadSpots(selectedSpot);
 };
+// make it possible to click on a spot and moving the map to the spot location.
 const moveMapToSpot = function(e) {
     //checking if the selected item is a spot
     if (e.path[1].className !== `surf-spot`) return;
-    // get data out of the selected item so it can be linked to a spot
+    // get the id number out of selected item
     const selectedSpotNumber = Number(e.path[1].dataset.id) + 1;
-    //call the move to location so the mapp will be changed
-    (0, _mapViewDefault.default).setMapToLocation(_model.data.surfspot[`spot${selectedSpotNumber}`]);
+    const modelSpot = _model.data.surfspot[`spot${selectedSpotNumber}`];
+    //set map to location
+    (0, _mapViewDefault.default).setMapToLocation(modelSpot);
+    //open corresponding popup
+    (0, _mapViewDefault.default).openMarker(`spot${selectedSpotNumber - 1}`);
+    //show graphic selected spot
+    (0, _spotViewDefault.default).activeSpot(e.target);
+    // display the session window and show all the sessions
+    displaySessions(modelSpot);
 };
+// get classname out of the marker to show graphic selected spot
+const markerClickHandler = function(e) {
+    const markerSpot = e.target._popup.options.className.slice(-1);
+    (0, _spotViewDefault.default).activeSpot(markerSpot);
+    //show the sessions connected with the spot
+    displaySessions(_model.data.surfspot[`spot${+markerSpot + 1}`]);
+};
+const sessionClick = function(e) {
+    (0, _sessionViewDefault.default).toggleLongSessionDescription(e.target);
+};
+// enable basic functionality at start of app
 const init = async function() {
     try {
         (0, _spotViewDefault.default).displaySpots(_model.data);
         (0, _spotViewDefault.default).addHandlerClick(moveMapToSpot);
         await (0, _mapViewDefault.default).setupMap();
-        (0, _mapViewDefault.default).displayMarkers(_model.data);
-        (0, _mapViewDefault.default).addhandlerClickMap(getClickLocation);
+        (0, _mapViewDefault.default).displayMarkers(_model.data, markerClickHandler);
+        (0, _sessionViewDefault.default).clickHandlerSession(sessionClick);
     } catch (err) {
         console.log(err.message);
     }
 };
-init(); //   #spotButtons(e) {
+init();
+// functions under construction:
+// get the location of a click on the map so it can be used to register a new spot.
+const getClickLocation = function(e) {
+    const latlng = (0, _mapViewDefault.default).getMarkerPosition(e);
+    _model.data.curClickedLocation = latlng;
+// creates popup that where you can implement spot information
+// submit/cancel
+// write data connected to the spot
+// upload data to api
+// rerender spots
+}; //////////////////////////////////////////////////////////////////////////////////////// CODE FROM EARLYER START VERSION
+ ////////////////////////////////////////////////////////////////////////
+ //   #spotButtons(e) {
  //     const clickedClasslist = e.target.classList;
  //     if (clickedClasslist.contains(`btn__new-spot-submit`)) {
  //       this.#newSpotName = inputName.value;
@@ -592,18 +626,42 @@ init(); //   #spotButtons(e) {
  //   this.dataReturn(spot);
  // };
 
-},{"./model":"Y4A21","./views/spotView":"balrh","./views/mapView":"b2AA2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
+},{"./model":"Y4A21","./views/spotView":"balrh","./views/mapView":"b2AA2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/sessionView":"01INf"}],"Y4A21":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "data", ()=>data);
 let data = {
     surfspot: {
         spot1: {
-            name: `test1`,
+            name: `Brown Haven`,
             location: {
-                name: `radazul`,
+                name: `Dunbar`,
                 lat: 56.002087,
                 long: -2.516737
+            },
+            sessions: {
+                session1: {
+                    date: "02/02/2022",
+                    strength: 2,
+                    clean: 4,
+                    overal: 3,
+                    waveheight: 1.2,
+                    swellheight: 0.8,
+                    wind: 12,
+                    windDirection: "NW",
+                    description: "filler text"
+                },
+                sessions2: {
+                    date: "02/02/2022",
+                    strength: 2,
+                    clean: 4,
+                    overal: 3,
+                    waveheight: 1.2,
+                    swellheight: 0.8,
+                    wind: 12,
+                    windDirection: "NW",
+                    description: "filler text"
+                }
             },
             forcast: [
                 {
@@ -798,7 +856,8 @@ let data = {
                 name: `radazul`,
                 lat: 28.403069,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         },
         spot3: {
             name: `test1`,
@@ -806,7 +865,8 @@ let data = {
                 name: `radazul`,
                 lat: 28.0,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         },
         spot4: {
             name: `test1`,
@@ -814,7 +874,8 @@ let data = {
                 name: `radazul`,
                 lat: 28.3,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         },
         spot5: {
             name: `test1`,
@@ -822,7 +883,8 @@ let data = {
                 name: `radazul`,
                 lat: 28.2,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         },
         spot6: {
             name: `test1`,
@@ -830,7 +892,8 @@ let data = {
                 name: `radazul`,
                 lat: 28.1,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         },
         spot7: {
             name: `test2`,
@@ -838,7 +901,8 @@ let data = {
                 name: `radazul`,
                 lat: 28.1,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         },
         spot8: {
             name: `test2`,
@@ -846,12 +910,17 @@ let data = {
                 name: `radazul`,
                 lat: 28.1,
                 long: -16.316904
-            }
+            },
+            sessions: {}
         }
     }
 };
 ////////////////////////////////////////////////////////////////////
-//CODE
+//
+////////////////////////////////////////////////////////////////////
+//API CALL
+// not used at this moment because of limited amount of calls possible.
+//list parameters for api call
 const parameters = [
     `waterTemperature`,
     `wavePeriod`,
@@ -891,16 +960,21 @@ const parameters = [
     `seaLevel`, 
 ];
 const getSpotData = async function(lat, lng) {
-    const time = Math.floor(Date.now() / 1000);
-    const currentTimeStr = `` + time;
-    const hourAgowStr = `` + (time - 3600);
-    const api = `9c945fb8-aacd-11ec-a97f-0242ac130002-9c946026-aacd-11ec-a97f-0242ac130002`;
-    const data1 = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${params}&start=${hourAgowStr}&end=${currentTimeStr}`, {
-        headers: {
-            Authorization: api
-        }
-    });
-    const dataJson = data1.json();
+    try {
+        //creating hour time slot for api call
+        const time = Math.floor(Date.now() / 1000);
+        const currentTimeStr = `` + time;
+        const hourAgowStr = `` + (time - 3600);
+        const api = `9c945fb8-aacd-11ec-a97f-0242ac130002-9c946026-aacd-11ec-a97f-0242ac130002`;
+        const data1 = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${params}&start=${hourAgowStr}&end=${currentTimeStr}`, {
+            headers: {
+                Authorization: api
+            }
+        });
+        const dataJson = data1.json();
+    } catch (err) {
+        console.log(err.message);
+    }
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
@@ -937,20 +1011,34 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class SpotView {
+    //getting as input the data from the model (api) and renders the spots onto the screen
     #spotContainer = document.querySelector(`.interface__surfspots`);
-    #surfSpot = document.querySelector(`.surf-spot`);
     displaySpots(spot) {
-        Object.entries(spot.surfspot).forEach((i, ind)=>{
+        // inserting html for every spot that is selected
+        Object.entries(spot.surfspot).forEach((_, ind)=>{
             const spotStr = `spot` + (ind + 1);
-            this.#spotContainer.insertAdjacentHTML(`beforeend`, `<form class="surf-spot" action="" data-id="${ind}">
+            this.#spotContainer.insertAdjacentHTML(`beforeend`, `<div class="surf-spot" action="" data-id="${ind}">
         <h3 class="form__spot-name">Name: 
         ${spot.surfspot[spotStr].name}</h3>
         <h3 class="form__spot-location">Location: ${spot.surfspot[spotStr].location.name}</h3>
-        </form>`);
+        </div>`);
         });
     }
+    //adding handler function to the clicks in the spot menu
     addHandlerClick(handler) {
         this.#spotContainer.addEventListener(`click`, handler);
+    }
+    activeSpot(spot) {
+        const allSpots = document.querySelectorAll(`.surf-spot`);
+        allSpots.forEach((s)=>s.classList.remove("surf-spot-active"));
+        if (typeof spot === "string") {
+            const selectedSpot = Array.from(allSpots).filter((spotItem)=>{
+                if (spotItem.dataset.id == spot) return spotItem;
+            });
+            console.log(selectedSpot[0].classList.add("surf-spot-active"));
+            return;
+        }
+        spot.closest(`.surf-spot`).classList.add("surf-spot-active");
     }
 }
 exports.default = new SpotView();
@@ -961,11 +1049,13 @@ parcelHelpers.defineInteropFlag(exports);
 class MapView {
     #map;
     #mapZoomlevel = 12;
+    #allMapObjects;
      #clearMap() {
         if (this.#map != undefined) this.#map.remove();
     }
+    //ask browser for the current location of the user
      #getLocation() {
-        //calling for location
+        //made a promise so it will wait for a response of the user before rendering the map
         return new Promise((res, rej)=>{
             navigator.geolocation.getCurrentPosition(res, rej);
         });
@@ -985,21 +1075,58 @@ class MapView {
             this.#loadMap();
         }
     }
-    async #loadMap(latlng = [
+     #loadMap(latlng = [
         53.0,
         9.0
     ], z = 5) {
-        //loading the map
+        //loading the map with default location or location given by browser
         return new Promise((res, rej)=>{
             this.#map = L.map("map").setView(latlng, z);
             L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(this.#map);
+            }).addTo(this.#map).on(`click`, this.popupClickHandler);
         });
     }
+    // displaying all the surfspots that are currently in the data obj
+    displayMarkers(surfspots, clickHandler) {
+        const arrSpots = Object.entries(surfspots.surfspot);
+        arrSpots.forEach((i, ind)=>{
+            const curLat = i[1].location.lat;
+            const curLng = i[1].location.long;
+            L.marker([
+                curLat,
+                curLng
+            ]).on("click", clickHandler).addTo(this.#map).bindPopup(L.popup({
+                maxWidth: 250,
+                minWidth: 150,
+                autoClose: true,
+                className: `spot-popup spot${ind}`,
+                closeOnClick: false
+            })).setPopupContent(`${i[1].location.name}`); // dummy text for spots
+        });
+    }
+    // set the map to a given location, for example when a surfspot is clicked.
+    setMapToLocation(spot) {
+        if (!this.#map) return;
+        // prefents error when a surfspot is clicked but there is not map loaded yet.
+        const coords = [
+            spot.location.lat,
+            spot.location.long
+        ];
+        this.#map.setView(coords, this.#mapZoomlevel);
+    }
+    // function for later determen where a new spot needs to be rendered
     addhandlerClickMap(handler) {
         // add eventhanlder click on the map
         this.#map.on(`click`, handler);
+    }
+    //open the marker that has the same classname as the currentSpot input
+    openMarker(currentSpot) {
+        Object.entries(this.#map._layers).forEach((layer)=>{
+            const marker = layer[1].dragging;
+            if (!marker) return; //checking if marker has a value
+            if (marker._marker._popup.options.className.slice(-5) === currentSpot) marker._marker.openPopup(); // selecting the one that has the same classname and opens the popup from this marker
+        });
     }
     getMarkerPosition(mapE) {
         //   returning clicked position on the map
@@ -1009,35 +1136,82 @@ class MapView {
             lng
         ];
     }
-    displayMarkers(surfspots) {
-        const arrSpots = Object.entries(surfspots.surfspot);
-        arrSpots.forEach((i, ind)=>{
-            const curLat = i[1].location.lat;
-            const curLng = i[1].location.long;
-            L.marker([
-                curLat,
-                curLng
-            ]).addTo(this.#map).bindPopup(L.popup({
-                maxWidth: 250,
-                minWidth: 150,
-                autoClose: false,
-                class: `spot-popup spot${ind}`,
-                closeOnClick: false
-            })).setPopupContent(`hello`);
-        });
-    }
-    setMapToLocation(spot) {
-        // set the map to a given location, for example when a surfspot is clicked.
-        if (!this.#map) return;
-        // prefents error when a surfspot is clicked but there is not map loaded yet.
-        const coords = [
-            spot.location.lat,
-            spot.location.long
-        ];
-        this.#map.setView(coords, this.#mapZoomlevel);
-    }
 }
 exports.default = new MapView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"01INf":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SessionView {
+    #session = document.querySelector(".sessions");
+    #sessionContainer = document.querySelector(".sessions__sessions");
+    #sessionsHeader = document.querySelector(".sessions__spotname");
+    clickHandlerSession(handler) {
+        this.#session.addEventListener(`click`, handler);
+    }
+    toggleLongSessionDescription(e) {
+        e.closest(".sessions__item").classList.toggle("four-rows");
+        e.closest(".sessions__item").lastElementChild.classList.toggle("toggeling");
+    }
+    // moves up the container into the map
+    showContainer() {
+        this.#session.style.transform = `translateY(1%)`;
+    }
+     #clearSessionContainer() {
+        this.#sessionContainer.innerHTML = "";
+    }
+    // calls functions to render the spots from the model data
+    loadSpots(spotData) {
+        this.#clearSessionContainer();
+        this.#loadHeader(spotData.name);
+        this.#loadItems.call(this, spotData.sessions);
+    }
+    //  changes the header name to the name of the currently selected spot
+     #loadHeader(name) {
+        this.#sessionsHeader.textContent = `${name}`;
+    }
+    // creates a list for the star items with unique class names based on the star item
+     #listLayout(info, prop) {
+        return ` <div class="sessions__item-${prop}">
+        <h5 class="sessions__item-rating-header">${prop.slice(0, 1).toUpperCase() + prop.slice(1)}</h5>
+        <ul class="rating">
+          ${this.#starItems(info, prop)}
+        </ul>
+      </div>`;
+    }
+    // make the individual star items
+     #starItems(starLocation, reference) {
+        let str = "";
+        for(let i = 1; i <= 5; i++)str += `<li class="rating-item rating-${reference} ${i === starLocation ? "active" : ""}" data-rate="${i}"></li>`;
+        return str;
+    }
+     #loadItems(data) {
+        if (!data.session1) return this.#sessionContainer.insertAdjacentHTML(`afterbegin`, `<h5 class="sessions__no-session">No recorded Sessions! Get your lazy body into the water!`);
+        Object.entries(data).forEach((session)=>{
+            const sessionData = session[1];
+            this.#sessionContainer.insertAdjacentHTML(`afterbegin`, `<div class="sessions__item">
+                              <h4 class="sessions__item-date">${sessionData.date}</h4>
+                              ${this.#listLayout.call(this, sessionData.strength, "strength")}
+                              ${this.#listLayout.call(this, sessionData.clean, "clean")}
+                              ${this.#listLayout.call(this, sessionData.overal, "overal")}
+                              <div class="sessions__item-extra toggeling">
+                              <h5 class="sessions__item-waveheight">Waveheight: ${sessionData.waveheight}M</h5>
+                              <h5 class="sessions__item-swellheight">SwellHeight: ${sessionData.swellheight}M</h5>
+                              <h5 class="sessions__item-wind">Wind: ${sessionData.wind}</h5>
+                              <h5 class="sessions__item-direction">WindDirection: ${sessionData.windDirection}</h5>
+
+                              <div class="sessions__item-image">
+                                  <h5>Picture:</h5>
+                                  <a href="">Image Session</a>
+                              </div>
+
+                              <h5 class="sessions__item-description">Description: ${sessionData.description}</h5>
+                              </div>
+                          </div>`);
+        });
+    }
+}
+exports.default = new SessionView();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["2kSJi","aenu9"], "aenu9", "parcelRequireefef")
 

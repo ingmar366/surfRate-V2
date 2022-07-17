@@ -3,11 +3,35 @@
 export let data = {
   surfspot: {
     spot1: {
-      name: `test1`,
+      name: `Brown Haven`,
       location: {
-        name: `radazul`,
+        name: `Dunbar`,
         lat: 56.002087,
         long: -2.516737,
+      },
+      sessions: {
+        session1: {
+          date: "02/02/2022",
+          strength: 2,
+          clean: 4,
+          overal: 3,
+          waveheight: 1.2,
+          swellheight: 0.8,
+          wind: 12,
+          windDirection: "NW",
+          description: "filler text",
+        },
+        sessions2: {
+          date: "02/02/2022",
+          strength: 2,
+          clean: 4,
+          overal: 3,
+          waveheight: 1.2,
+          swellheight: 0.8,
+          wind: 12,
+          windDirection: "NW",
+          description: "filler text",
+        },
       },
       forcast: [
         {
@@ -203,6 +227,7 @@ export let data = {
         lat: 28.403069,
         long: -16.316904,
       },
+      sessions: {},
     },
     spot3: {
       name: `test1`,
@@ -211,6 +236,7 @@ export let data = {
         lat: 28.0,
         long: -16.316904,
       },
+      sessions: {},
     },
     spot4: {
       name: `test1`,
@@ -219,6 +245,7 @@ export let data = {
         lat: 28.3,
         long: -16.316904,
       },
+      sessions: {},
     },
     spot5: {
       name: `test1`,
@@ -227,6 +254,7 @@ export let data = {
         lat: 28.2,
         long: -16.316904,
       },
+      sessions: {},
     },
     spot6: {
       name: `test1`,
@@ -235,6 +263,7 @@ export let data = {
         lat: 28.1,
         long: -16.316904,
       },
+      sessions: {},
     },
     spot7: {
       name: `test2`,
@@ -243,6 +272,7 @@ export let data = {
         lat: 28.1,
         long: -16.316904,
       },
+      sessions: {},
     },
     spot8: {
       name: `test2`,
@@ -251,6 +281,7 @@ export let data = {
         lat: 28.1,
         long: -16.316904,
       },
+      sessions: {},
     },
   },
 };
