@@ -31,6 +31,10 @@ class AddSpotView {
     );
     return [nameData, locationData];
   }
+
+  clearFields() {
+    this.#inputName.value = this.#inputLocation.value = "";
+  }
 }
 
 export default new AddSpotView();

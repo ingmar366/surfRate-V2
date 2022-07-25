@@ -156,7 +156,6 @@ const gettingData = function (e) {
   // closing and clearing the modal
   addSessionView.clearAndClose();
   modalView.toggleModal();
-
   formatAndUpload(data);
 };
 
@@ -164,7 +163,7 @@ const gettingData = function (e) {
 // event handler to clicks on modal buttons
 const modalClicks = function (e) {
   const targetEl = e.target;
-  if (targetEl.classList.contains("add__spot-rating-item"))
+  if (targetEl.classList.contains("add__session-rating-item"))
     addSessionView.settingStars(targetEl);
   if (targetEl.classList.contains(`add__session-submit`)) {
     e.preventDefault();
@@ -195,12 +194,13 @@ const submitClickHandler = function (e) {
   const data = addSpotView.getInputData();
   // validate data
   if (!data) return;
-  const name = `spot${getAmountSurfspots()}`;
+  const name = `spot${getAmountSurfspots() + 1}`;
   model.newSurfSpot(name, data);
   spotView.displaySpots(model.data);
   mapView.displayMarkers(model.data, markerClickHandler);
   modalView.toggleModal();
-  addSessionView.hideSessionForm();
+  addSpotView.clearFields();
+  addSpotView.hideSpotForm();
 };
 
 ////////////////////////////////////////////////////////////

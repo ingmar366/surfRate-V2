@@ -74,7 +74,7 @@ class AddSessionView {
     this.#clearStars("add__session-item-condition");
     this.#clearStars("add__session-item-clean");
     this.#clearText();
-    this.toggleSessionForm();
+    this.hideSessionForm();
   }
 }
 

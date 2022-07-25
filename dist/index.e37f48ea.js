@@ -653,7 +653,7 @@ const gettingData = function(e) {
 // event handler to clicks on modal buttons
 const modalClicks = function(e) {
     const targetEl = e.target;
-    if (targetEl.classList.contains("add__spot-rating-item")) (0, _addSessionViewDefault.default).settingStars(targetEl);
+    if (targetEl.classList.contains("add__session-rating-item")) (0, _addSessionViewDefault.default).settingStars(targetEl);
     if (targetEl.classList.contains(`add__session-submit`)) {
         e.preventDefault();
         gettingData(targetEl);
@@ -683,12 +683,13 @@ const submitClickHandler = function(e) {
     const data = (0, _addSpotViewDefault.default).getInputData();
     // validate data
     if (!data) return;
-    const name = `spot${getAmountSurfspots()}`;
+    const name = `spot${getAmountSurfspots() + 1}`;
     _model.newSurfSpot(name, data);
     (0, _spotViewDefault.default).displaySpots(_model.data);
     (0, _mapViewDefault.default).displayMarkers(_model.data, markerClickHandler);
     (0, _modalViewDefault.default).toggleModal();
-    (0, _addSessionViewDefault.default).hideSessionForm();
+    (0, _addSpotViewDefault.default).clearFields();
+    (0, _addSpotViewDefault.default).hideSpotForm();
 };
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
@@ -755,222 +756,222 @@ let data = {
                     windDirection: "NW",
                     description: "filler text"
                 }
-            },
-            forcast: [
-                {
-                    seaLevel: {
-                        meto: -1.73,
-                        sg: -1.73
-                    },
-                    secondarySwellDirection: {
-                        noaa: 21.34,
-                        sg: 21.34
-                    },
-                    secondarySwellHeight: {
-                        noaa: 0.09,
-                        sg: 0.09
-                    },
-                    secondarySwellPeriod: {
-                        noaa: 12.02,
-                        sg: 12.02
-                    },
-                    swellDirection: {
-                        dwd: 86.74,
-                        icon: 81.16,
-                        meteo: 72.28,
-                        meto: 34.5,
-                        noaa: 101.54,
-                        sg: 34.5
-                    },
-                    swellHeight: {
-                        dwd: 0.31,
-                        icon: 0.27,
-                        meteo: 0.03,
-                        meto: 0.17,
-                        noaa: 0.17,
-                        sg: 0.17
-                    },
-                    swellPeriod: {
-                        dwd: 6.16,
-                        icon: 6.49,
-                        meteo: 3.05,
-                        meto: 10.71,
-                        noaa: 3.82,
-                        sg: 10.71
-                    },
-                    time: "2022-03-24T11:00:00+00:00",
-                    waterTemperature: {
-                        meto: 7.26,
-                        noaa: 9.65,
-                        sg: 7.26
-                    },
-                    waveDirection: {
-                        icon: 81.34,
-                        meteo: 53.54,
-                        meto: 34,
-                        noaa: 46.75,
-                        sg: 34
-                    },
-                    waveHeight: {
-                        dwd: 0.31,
-                        icon: 0.27,
-                        meteo: 0.04,
-                        meto: 0.2,
-                        noaa: 0.23,
-                        sg: 0.2
-                    },
-                    wavePeriod: {
-                        icon: 6.45,
-                        meteo: 3.18,
-                        meto: 3.47,
-                        noaa: 7.15,
-                        sg: 3.47
-                    },
-                    windDirection: {
-                        icon: 227.14,
-                        noaa: 255.4,
-                        sg: 227.14
-                    },
-                    windDirection1000hpa: {
-                        noaa: 269.98,
-                        sg: 269.98
-                    },
-                    windDirection100m: {
-                        noaa: 269.98,
-                        sg: 269.98
-                    },
-                    windDirection200hpa: {
-                        noaa: 270.12,
-                        sg: 270.12
-                    },
-                    windDirection20m: {
-                        noaa: 269.99,
-                        sg: 269.99
-                    },
-                    windDirection30m: {
-                        noaa: 269.99,
-                        sg: 269.99
-                    },
-                    windDirection40m: {
-                        noaa: 269.98,
-                        sg: 269.98
-                    },
-                    windDirection500hpa: {
-                        noaa: 270.04,
-                        sg: 270.04
-                    },
-                    windDirection50m: {
-                        noaa: 269.98,
-                        sg: 269.98
-                    },
-                    windDirection800hpa: {
-                        noaa: 270,
-                        sg: 270
-                    },
-                    windDirection80m: {
-                        noaa: 269.98,
-                        sg: 269.98
-                    },
-                    windSpeed: {
-                        icon: 3.01,
-                        noaa: 3.43,
-                        sg: 3.01
-                    },
-                    windSpeed1000hpa: {
-                        noaa: 4.85,
-                        sg: 4.85
-                    },
-                    windSpeed100m: {
-                        noaa: 4.66,
-                        sg: 4.66
-                    },
-                    windSpeed200hpa: {
-                        noaa: 8.26,
-                        sg: 8.26
-                    },
-                    windSpeed20m: {
-                        noaa: 3.61,
-                        sg: 3.61
-                    },
-                    windSpeed30m: {
-                        noaa: 3.94,
-                        sg: 3.94
-                    },
-                    windSpeed40m: {
-                        noaa: 4.13,
-                        sg: 4.13
-                    },
-                    windSpeed500hpa: {
-                        noaa: 4.17,
-                        sg: 4.17
-                    },
-                    windSpeed50m: {
-                        noaa: 4.3,
-                        sg: 4.3
-                    },
-                    windSpeed800hpa: {
-                        noaa: 5.44,
-                        sg: 5.44
-                    },
-                    windSpeed80m: {
-                        noaa: 4.57,
-                        sg: 4.57
-                    },
-                    windWaveDirection: {
-                        dwd: 180,
-                        icon: 211.19,
-                        meteo: 317.72,
-                        meto: 287.6,
-                        noaa: 266.25,
-                        sg: 287.6
-                    },
-                    windWaveHeight: {
-                        dwd: 0,
-                        icon: 0.02,
-                        meteo: 0,
-                        meto: 0.07,
-                        noaa: 0.14,
-                        sg: 0.07
-                    },
-                    windWavePeriod: {
-                        dwd: 1,
-                        icon: 1.32,
-                        meteo: 0,
-                        meto: 1.52,
-                        noaa: 1.81,
-                        sg: 1.52
-                    }
-                }, 
-            ]
+            }
         },
         spot2: {
-            name: `test2`,
+            name: `petten`,
             location: {
-                name: `radazul`,
-                lat: 28.403069,
-                long: -16.316904
+                name: `petten`,
+                lat: 52.770033,
+                long: 4.654109
             },
             sessions: {}
         },
         spot3: {
-            name: `test1`,
+            name: `bergen`,
             location: {
-                name: `radazul`,
-                lat: 28.0,
-                long: -16.316904
+                name: `bergen aan zee`,
+                lat: 52.661555,
+                long: 4.621055
             },
             sessions: {}
         },
         spot4: {
-            name: `test1`,
+            name: `wijk`,
             location: {
-                name: `radazul`,
-                lat: 28.3,
-                long: -16.316904
+                name: `Wijk aan Zee`,
+                lat: 52.472203,
+                long: 4.552814
             },
             sessions: {}
         }
-    }
+    },
+    forcast: [
+        {
+            seaLevel: {
+                meto: -1.73,
+                sg: -1.73
+            },
+            secondarySwellDirection: {
+                noaa: 21.34,
+                sg: 21.34
+            },
+            secondarySwellHeight: {
+                noaa: 0.09,
+                sg: 0.09
+            },
+            secondarySwellPeriod: {
+                noaa: 12.02,
+                sg: 12.02
+            },
+            swellDirection: {
+                dwd: 86.74,
+                icon: 81.16,
+                meteo: 72.28,
+                meto: 34.5,
+                noaa: 101.54,
+                sg: 34.5
+            },
+            swellHeight: {
+                dwd: 0.31,
+                icon: 0.27,
+                meteo: 0.03,
+                meto: 0.17,
+                noaa: 0.17,
+                sg: 0.17
+            },
+            swellPeriod: {
+                dwd: 6.16,
+                icon: 6.49,
+                meteo: 3.05,
+                meto: 10.71,
+                noaa: 3.82,
+                sg: 10.71
+            },
+            time: "2022-03-24T11:00:00+00:00",
+            waterTemperature: {
+                meto: 7.26,
+                noaa: 9.65,
+                sg: 7.26
+            },
+            waveDirection: {
+                icon: 81.34,
+                meteo: 53.54,
+                meto: 34,
+                noaa: 46.75,
+                sg: 34
+            },
+            waveHeight: {
+                dwd: 0.31,
+                icon: 0.27,
+                meteo: 0.04,
+                meto: 0.2,
+                noaa: 0.23,
+                sg: 0.2
+            },
+            wavePeriod: {
+                icon: 6.45,
+                meteo: 3.18,
+                meto: 3.47,
+                noaa: 7.15,
+                sg: 3.47
+            },
+            windDirection: {
+                icon: 227.14,
+                noaa: 255.4,
+                sg: 227.14
+            },
+            windDirection1000hpa: {
+                noaa: 269.98,
+                sg: 269.98
+            },
+            windDirection100m: {
+                noaa: 269.98,
+                sg: 269.98
+            },
+            windDirection200hpa: {
+                noaa: 270.12,
+                sg: 270.12
+            },
+            windDirection20m: {
+                noaa: 269.99,
+                sg: 269.99
+            },
+            windDirection30m: {
+                noaa: 269.99,
+                sg: 269.99
+            },
+            windDirection40m: {
+                noaa: 269.98,
+                sg: 269.98
+            },
+            windDirection500hpa: {
+                noaa: 270.04,
+                sg: 270.04
+            },
+            windDirection50m: {
+                noaa: 269.98,
+                sg: 269.98
+            },
+            windDirection800hpa: {
+                noaa: 270,
+                sg: 270
+            },
+            windDirection80m: {
+                noaa: 269.98,
+                sg: 269.98
+            },
+            windSpeed: {
+                icon: 3.01,
+                noaa: 3.43,
+                sg: 3.01
+            },
+            windSpeed1000hpa: {
+                noaa: 4.85,
+                sg: 4.85
+            },
+            windSpeed100m: {
+                noaa: 4.66,
+                sg: 4.66
+            },
+            windSpeed200hpa: {
+                noaa: 8.26,
+                sg: 8.26
+            },
+            windSpeed20m: {
+                noaa: 3.61,
+                sg: 3.61
+            },
+            windSpeed30m: {
+                noaa: 3.94,
+                sg: 3.94
+            },
+            windSpeed40m: {
+                noaa: 4.13,
+                sg: 4.13
+            },
+            windSpeed500hpa: {
+                noaa: 4.17,
+                sg: 4.17
+            },
+            windSpeed50m: {
+                noaa: 4.3,
+                sg: 4.3
+            },
+            windSpeed800hpa: {
+                noaa: 5.44,
+                sg: 5.44
+            },
+            windSpeed80m: {
+                noaa: 4.57,
+                sg: 4.57
+            },
+            windWaveDirection: {
+                dwd: 180,
+                icon: 211.19,
+                meteo: 317.72,
+                meto: 287.6,
+                noaa: 266.25,
+                sg: 287.6
+            },
+            windWaveHeight: {
+                dwd: 0,
+                icon: 0.02,
+                meteo: 0,
+                meto: 0.07,
+                noaa: 0.14,
+                sg: 0.07
+            },
+            windWavePeriod: {
+                dwd: 1,
+                icon: 1.32,
+                meteo: 0,
+                meto: 1.52,
+                noaa: 1.81,
+                sg: 1.52
+            }
+        }, 
+    ]
 };
 let clickLocation;
 let curSelectedSpot;
@@ -1182,7 +1183,7 @@ class MapView {
                 autoClose: true,
                 className: `spot-popup spot${ind}`,
                 closeOnClick: false
-            }).on("click", this.popupClickHandler)).setPopupContent(`${i[1].location.name}`);
+            })).setPopupContent(`${i[1].location.name}`);
         });
     }
     // set the map to a given location, for example when a surfspot is clicked.
@@ -1207,9 +1208,6 @@ class MapView {
             if (!marker) return; //checking if marker has a value
             if (marker._marker._popup.options.className.slice(-5) === currentSpot) marker._marker.openPopup(); // selecting the one that has the same classname and opens the popup from this marker
         });
-    }
-    popupClickHandler(e) {
-        console.log(document.querySelector(`.spot-popup`));
     }
 }
 exports.default = new MapView();
@@ -1348,7 +1346,7 @@ class AddSessionView {
         this.#clearStars("add__session-item-condition");
         this.#clearStars("add__session-item-clean");
         this.#clearText();
-        this.toggleSessionForm();
+        this.hideSessionForm();
     }
 }
 exports.default = new AddSessionView();
@@ -1420,6 +1418,9 @@ class AddSpotView {
             nameData,
             locationData
         ];
+    }
+    clearFields() {
+        this.#inputName.value = this.#inputLocation.value = "";
     }
 }
 exports.default = new AddSpotView();

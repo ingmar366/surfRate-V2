@@ -56,7 +56,7 @@ class MapView {
             autoClose: true,
             className: `spot-popup spot${ind}`,
             closeOnClick: false,
-          }).on("click", this.popupClickHandler)
+          })
         )
         .setPopupContent(`${i[1].location.name}`);
     });
@@ -84,10 +84,6 @@ class MapView {
       if (marker._marker._popup.options.className.slice(-5) === currentSpot)
         marker._marker.openPopup(); // selecting the one that has the same classname and opens the popup from this marker
     });
-  }
-
-  popupClickHandler(e) {
-    console.log(document.querySelector(`.spot-popup`));
   }
 }
 
