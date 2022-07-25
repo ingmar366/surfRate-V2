@@ -1,0 +1,9 @@
+.input {
+  padding: 8px;
+  border-radius: $border-radius;
+}
+
+.invalid-input {
+  border: 1px solid red;
+  background-color: rgba(205, 106, 141, 0.623);
+}

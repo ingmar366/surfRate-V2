@@ -1,23 +1,29 @@
 import * as model from "./model";
 import spotView from "./views/spotView";
+import modalView from "./views/modalView";
 import mapView from "./views/mapView";
 import sessionView from "./views/sessionView";
+import addSessionView from "./views/addSessionView";
+import markupView from "./views/markupView";
+import addSessionView from "./views/addSessionView";
+import addSpotView from "./views/addSpotView";
 
-////////////////////////////////////////////////////////////////// display spots /////////////////
-
-// call functions to show session menu and the sessions
+////////////////////////////////////////////////////////////
+// SHOW SESSION MENU AND SESSIONS
 const displaySessions = function (selectedSpot) {
   sessionView.showContainer();
   sessionView.loadSpots(selectedSpot);
 };
 
-// make it possible to click on a spot and moving the map to the spot location.
+////////////////////////////////////////////////////////////
+// MOVE TO CLICKED MARKER LOCATION
 const moveMapToSpot = function (e) {
   //checking if the selected item is a spot
-  if (e.path[1].className !== `surf-spot`) return;
+  if (e.target.parentNode.className !== `surf-spot`) return;
   // get the id number out of selected item
-  const selectedSpotNumber = Number(e.path[1].dataset.id) + 1;
-
+  const selectedSpotNumber = Number(e.target.parentNode.dataset.id) + 1;
+  // updating selected spot
+  model.selectedSpot(selectedSpotNumber);
   const modelSpot = model.data.surfspot[`spot${selectedSpotNumber}`];
   //set map to location
   mapView.setMapToLocation(modelSpot);
@@ -32,114 +38,189 @@ const moveMapToSpot = function (e) {
   displaySessions(modelSpot);
 };
 
-// get classname out of the marker to show graphic selected spot
+////////////////////////////////////////////////////////////
+// GET INFO SELECTED MARKER AND SELECT SPOT IN MENU
 const markerClickHandler = function (e) {
   const markerSpot = e.target._popup.options.className.slice(-1);
   spotView.activeSpot(markerSpot);
+  // update current active spot
+  model.selectedSpot(markerSpot);
   //show the sessions connected with the spot
   displaySessions(model.data.surfspot[`spot${+markerSpot + 1}`]);
+  mapView.openMarker(`spot${+markerSpot + 1}`);
 };
 
-const sessionClick = function (e) {
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+//SESSION HANDELING
+
+//SHOW EXTENDED INFO SESSION
+const sessionClickHandler = function (e) {
   sessionView.toggleLongSessionDescription(e.target);
 };
 
-// enable basic functionality at start of app
+////////////////////////////////////////////////////////////
+// NEW SESSION CLICK
+const openModalHandler = function (e) {
+  e.preventDefault();
+  const curSpotData = model.selectedSpotData();
+  if (!curSpotData) {
+    window.alert(`Select a spot before adding a new session!`);
+    return;
+  }
+  modalView.toggleModal();
+  addSessionView.showSessionForm(curSpotData.name);
+};
+
+const closeModal = function (e) {
+  e.preventDefault();
+  modalView.toggleModal();
+  addSessionView.hideSessionForm();
+  addSpotView.hideSpotForm();
+};
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+// CREATE NEW SESSION
+
+// GET CURRENT DATE
+const getCurrentDate = function () {
+  const date = new Date();
+  const curDate = `${date.getDate()}/${
+    date.getMonth() + 1
+  }/${date.getFullYear()}`;
+  return curDate;
+};
+////////////////////////////////////////////////////////////
+// MAKE API CALL FOR CURRENT SELECTED SPOT
+const stormglassAPICall = async function () {
+  try {
+    // getting lat and long from the current selected spot
+    const { lat: curSpotLat, long: curSpotLong } =
+      model.data.surfspot[`spot${model.curSelectedSpot}`].location;
+
+    // call stormglass api for data
+    const { hours } = await model.getSpotData(curSpotLat, curSpotLong);
+    const conditionData = hours[0];
+    return conditionData;
+  } catch (err) {
+    console.log(message.err);
+  }
+};
+////////////////////////////////////////////////////////////
+// CALCULATE THE LENGTH OF SESSIONS TO NAME THE NEXT
+const getAmountOfSessions = function () {
+  const amountSessions = `session${
+    Object.keys(model.data.surfspot[`spot${model.curSelectedSpot}`].sessions)
+      .length + 1
+  }`;
+  return amountSessions;
+};
+////////////////////////////////////////////////////////////
+// GET DATA FROM SOURCES , FORMAT AND UPLOADS DATA TO MODEL
+const formatAndUpload = async function (data) {
+  const conditionData = await stormglassAPICall();
+  const amountSessions = getAmountOfSessions();
+  const curDate = getCurrentDate();
+
+  const resultObj = {
+    date: curDate,
+    ...conditionData,
+    strength: +data.strength,
+    clean: +data.clean,
+    overal: +data.overal,
+    description: data.description,
+    wind: conditionData.windSpeed.sg,
+    windDirection: conditionData.windDirection.sg,
+    waveheight: conditionData.waveHeight.sg,
+    swellheight: conditionData.swellHeight.sg,
+  };
+
+  // updating data
+  model.uploadData(resultObj, amountSessions);
+  // refreshing sessions
+  displaySessions(model.data.surfspot[`spot${model.curSelectedSpot}`]);
+};
+
+////////////////////////////////////////////////////////////
+// PROCESS DATA WHEN SUBMIT HAS BEEN CLICKED
+const gettingData = function (e) {
+  // getting the data out of the modal
+  const data = addSessionView.getInputData();
+  // checking for valid data
+  if (!data.strength || !data.clean || !data.overal) {
+    window.alert("Please enter valid ratings!");
+    return;
+  }
+  // closing and clearing the modal
+  addSessionView.clearAndClose();
+  modalView.toggleModal();
+
+  formatAndUpload(data);
+};
+
+////////////////////////////////////////////////////////////
+// event handler to clicks on modal buttons
+const modalClicks = function (e) {
+  const targetEl = e.target;
+  if (targetEl.classList.contains("add__spot-rating-item"))
+    addSessionView.settingStars(targetEl);
+  if (targetEl.classList.contains(`add__session-submit`)) {
+    e.preventDefault();
+    gettingData(targetEl);
+  }
+};
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+// CREATE NEW SPOT
+const getMarkerPosition = function (mapE) {
+  //   returning clicked position on the map
+  const { lat, lng } = mapE.latlng;
+  modalView.toggleModal();
+  addSpotView.showSpotForm();
+  // save clicked location in model
+  model.selectedLocation([lat, lng]);
+};
+
+// get the length amount spots
+const getAmountSurfspots = function () {
+  return Object.keys(model.data.surfspot).length;
+};
+
+const submitClickHandler = function (e) {
+  e.preventDefault();
+  //get data out of input fields
+  const data = addSpotView.getInputData();
+  // validate data
+  if (!data) return;
+  const name = `spot${getAmountSurfspots()}`;
+  model.newSurfSpot(name, data);
+  spotView.displaySpots(model.data);
+  mapView.displayMarkers(model.data, markerClickHandler);
+  modalView.toggleModal();
+  addSessionView.hideSessionForm();
+};
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+// initializing basic functionality at the start up of application
 const init = async function () {
   try {
+    await mapView.setupMap();
     spotView.displaySpots(model.data);
     spotView.addHandlerClick(moveMapToSpot);
-    await mapView.setupMap();
     mapView.displayMarkers(model.data, markerClickHandler);
-    sessionView.clickHandlerSession(sessionClick);
+    mapView.addHandlerClickMap(getMarkerPosition);
+    sessionView.clickHandlerSession(sessionClickHandler);
+    markupView.newSessionClickHandler(openModalHandler);
+    modalView.closeHandler(closeModal);
+    addSessionView.clickHandler(modalClicks);
+    addSpotView.clickHandler(submitClickHandler);
   } catch (err) {
     console.log(err.message);
   }
 };
 
 init();
-
-// functions under construction:
-
-// get the location of a click on the map so it can be used to register a new spot.
-const getClickLocation = function (e) {
-  const latlng = mapView.getMarkerPosition(e);
-  model.data.curClickedLocation = latlng;
-
-  // creates popup that where you can implement spot information
-
-  // submit/cancel
-
-  // write data connected to the spot
-
-  // upload data to api
-
-  // rerender spots
-};
-
-//////////////////////////////////////////////////////////////////////////////////////// CODE FROM EARLYER START VERSION
-////////////////////////////////////////////////////////////////////////
-
-//   #spotButtons(e) {
-//     const clickedClasslist = e.target.classList;
-//     if (clickedClasslist.contains(`btn__new-spot-submit`)) {
-//       this.#newSpotName = inputName.value;
-//       this.#newSpotLocation = inputLocation.value;
-//       this.#newSpotDirection = inputDirection.value;
-//       inputName.value = inputLocation.value = inputDirection.value = "";
-//       this.modalVisibilty();
-//       this.#placeMarker(this.#newSpotLat, this.#newSpotLng);
-//     }
-//   }
-
-//   #getMarkerPosition(mapE) {
-//     const { lat, lng } = mapE.latlng;
-
-//     this.modalVisibilty();
-
-//     this.#newSpotLat = lat;
-//     this.#newSpotLng = lng;
-//   }
-
-//   #placeMarker(lat, lng) {
-//     this.#surfspotCounter = Object.entries(localData.surfspot).length;
-//     localData.surfspot[`spot${this.#surfspotCounter}`] = {
-//       name: this.#newSpotName,
-//       location: {
-//         name: this.#newSpotLocation,
-//         direction: this.#newSpotDirection,
-//         lat: lat,
-//         long: lng,
-//       },
-//     };
-//     L.marker([lat, lng])
-//       .addTo(this.#map)
-//       .bindPopup(
-//         L.popup({
-//           maxWidth: 250,
-//           minWidth: 150,
-//           autoClose: false,
-//           closeOnClick: false,
-//         }).setContent(
-//           `<div class="spot-popup" data-spotIndex=${
-//             this.#surfspotCounter + 1
-//           }><span>${this.#newSpotName}</span>
-//           <p>${this.#newSpotLocation}</div>`
-//         )
-//       );
-//     console.log(localData.surfspot[`spot${this.#surfspotCounter}`]);
-//     this.displaySpots();
-//   }
-//   modalVisibilty() {
-//     newSpot.classList.toggle(`hidden`);
-//     modal.classList.toggle(`hidden`);
-//     overlay.classList.toggle(`hidden`);
-//   }
-// }
-
-// // TO KEEP FOR SOMEWHERE ELSE:
-
-// const getData = function (location) {
-//   const spot = localData.surfspot[location];
-//   this.dataReturn(spot);
-// };

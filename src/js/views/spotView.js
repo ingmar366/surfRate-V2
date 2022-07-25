@@ -3,6 +3,7 @@ class SpotView {
   #spotContainer = document.querySelector(`.interface__surfspots`);
 
   displaySpots(spot) {
+    this.#spotContainer.innerHTML = "";
     // inserting html for every spot that is selected
     Object.entries(spot.surfspot).forEach((_, ind) => {
       const spotStr = `spot` + (ind + 1);
@@ -30,7 +31,7 @@ class SpotView {
       const selectedSpot = Array.from(allSpots).filter((spotItem) => {
         if (spotItem.dataset.id == spot) return spotItem;
       });
-      console.log(selectedSpot[0].classList.add("surf-spot-active"));
+      selectedSpot[0].classList.add("surf-spot-active");
       return;
     }
     spot.closest(`.surf-spot`).classList.add("surf-spot-active");

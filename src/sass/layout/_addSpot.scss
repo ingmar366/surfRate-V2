@@ -1,0 +1,21 @@
+.add__spot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  justify-items: center;
+  min-height: 50vh;
+
+  &-header {
+    grid-column: 1/-1;
+  }
+  & h5 {
+    display: inline-block;
+    margin-right: 1rem;
+  }
+  &-submit {
+    grid-column: 1/-1;
+    align-self: end;
+  }
+}

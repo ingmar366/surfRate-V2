@@ -1,7 +1,6 @@
 class MapView {
   #map;
   #mapZoomlevel = 12;
-  #allMapObjects;
 
   #clearMap() {
     if (this.#map != undefined) {
@@ -37,9 +36,7 @@ class MapView {
       L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      })
-        .addTo(this.#map)
-        .on(`click`, this.popupClickHandler);
+      }).addTo(this.#map);
     });
   }
 
@@ -59,9 +56,9 @@ class MapView {
             autoClose: true,
             className: `spot-popup spot${ind}`,
             closeOnClick: false,
-          })
+          }).on("click", this.popupClickHandler)
         )
-        .setPopupContent(`${i[1].location.name}`); // dummy text for spots
+        .setPopupContent(`${i[1].location.name}`);
     });
   }
 
@@ -74,7 +71,7 @@ class MapView {
   }
 
   // function for later determen where a new spot needs to be rendered
-  addhandlerClickMap(handler) {
+  addHandlerClickMap(handler) {
     // add eventhanlder click on the map
     this.#map.on(`click`, handler);
   }
@@ -89,10 +86,8 @@ class MapView {
     });
   }
 
-  getMarkerPosition(mapE) {
-    //   returning clicked position on the map
-    const { lat, lng } = mapE.latlng;
-    return [lat, lng];
+  popupClickHandler(e) {
+    console.log(document.querySelector(`.spot-popup`));
   }
 }
 

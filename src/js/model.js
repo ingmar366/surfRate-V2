@@ -21,7 +21,7 @@ export let data = {
           windDirection: "NW",
           description: "filler text",
         },
-        sessions2: {
+        session2: {
           date: "02/02/2022",
           strength: 2,
           clean: 4,
@@ -247,50 +247,17 @@ export let data = {
       },
       sessions: {},
     },
-    spot5: {
-      name: `test1`,
-      location: {
-        name: `radazul`,
-        lat: 28.2,
-        long: -16.316904,
-      },
-      sessions: {},
-    },
-    spot6: {
-      name: `test1`,
-      location: {
-        name: `radazul`,
-        lat: 28.1,
-        long: -16.316904,
-      },
-      sessions: {},
-    },
-    spot7: {
-      name: `test2`,
-      location: {
-        name: `radazul`,
-        lat: 28.1,
-        long: -16.316904,
-      },
-      sessions: {},
-    },
-    spot8: {
-      name: `test2`,
-      location: {
-        name: `radazul`,
-        lat: 28.1,
-        long: -16.316904,
-      },
-      sessions: {},
-    },
   },
 };
-////////////////////////////////////////////////////////////////////
-//
 
 ////////////////////////////////////////////////////////////////////
+
+// VARIABLES
+// keep track of location clicked on map
+export let clickLocation;
+// Keep track of the number of selected spot
+export let curSelectedSpot;
 //API CALL
-// not used at this moment because of limited amount of calls possible.
 
 //list parameters for api call
 const parameters = [
@@ -332,7 +299,7 @@ const parameters = [
   `seaLevel`,
 ];
 
-const getSpotData = async function (lat, lng) {
+export const getSpotData = async function (lat, lng) {
   try {
     //creating hour time slot for api call
     const time = Math.floor(Date.now() / 1000);
@@ -341,7 +308,7 @@ const getSpotData = async function (lat, lng) {
     const api = `9c945fb8-aacd-11ec-a97f-0242ac130002-9c946026-aacd-11ec-a97f-0242ac130002`;
 
     const data = await fetch(
-      `https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${params}&start=${hourAgowStr}&end=${currentTimeStr}`,
+      `https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${parameters}&start=${hourAgowStr}&end=${currentTimeStr}`,
       {
         headers: {
           Authorization: api,
@@ -349,7 +316,40 @@ const getSpotData = async function (lat, lng) {
       }
     );
     const dataJson = data.json();
+    return dataJson;
   } catch (err) {
     console.log(err.message);
   }
+};
+
+// update selected spot
+export const selectedSpot = function (selectedSpot) {
+  curSelectedSpot = selectedSpot;
+};
+
+export const selectedLocation = function (latlng) {
+  clickLocation = latlng;
+};
+
+// return the information of the current selected spot
+export const selectedSpotData = function () {
+  if (!curSelectedSpot) return;
+  return data.surfspot[`spot${curSelectedSpot}`];
+};
+
+// update the data with new sessions
+export const uploadData = function (sessionData, session) {
+  data.surfspot[`spot${curSelectedSpot}`].sessions[session] = sessionData;
+};
+
+export const newSurfSpot = function (spotName, inputData) {
+  data.surfspot[spotName] = {
+    name: inputData[0],
+    location: {
+      name: inputData[1],
+      lat: clickLocation[0],
+      long: clickLocation[1],
+    },
+    sessions: {},
+  };
 };

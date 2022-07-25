@@ -22,6 +22,7 @@ class SessionView {
 
   // calls functions to render the spots from the model data
   loadSpots(spotData) {
+    console.log(spotData);
     this.#clearSessionContainer();
     this.#loadHeader(spotData.name);
     this.#loadItems.call(this, spotData.sessions);
@@ -44,7 +45,7 @@ class SessionView {
       </div>`;
   }
 
-  // make the individual star items
+  // make the individual star items and determines where the active is positioned based on the input number
   #starItems(starLocation, reference) {
     let str = "";
     for (let i = 1; i <= 5; i++) {
@@ -65,49 +66,35 @@ class SessionView {
       const sessionData = session[1];
       this.#sessionContainer.insertAdjacentHTML(
         `afterbegin`,
-        `<div class="sessions__item">
-                              <h4 class="sessions__item-date">${
-                                sessionData.date
-                              }</h4>
-                              ${this.#listLayout.call(
-                                this,
-                                sessionData.strength,
-                                "strength"
-                              )}
-                              ${this.#listLayout.call(
-                                this,
-                                sessionData.clean,
-                                "clean"
-                              )}
-                              ${this.#listLayout.call(
-                                this,
-                                sessionData.overal,
-                                "overal"
-                              )}
-                              <div class="sessions__item-extra toggeling">
-                              <h5 class="sessions__item-waveheight">Waveheight: ${
-                                sessionData.waveheight
-                              }M</h5>
-                              <h5 class="sessions__item-swellheight">SwellHeight: ${
-                                sessionData.swellheight
-                              }M</h5>
-                              <h5 class="sessions__item-wind">Wind: ${
-                                sessionData.wind
-                              }</h5>
-                              <h5 class="sessions__item-direction">WindDirection: ${
-                                sessionData.windDirection
-                              }</h5>
+        `<div class="sessions__item"> <h4 class="sessions__item-date">${
+          sessionData.date
+        }</h4>${this.#listLayout.call(
+          this,
+          sessionData.strength,
+          "strength"
+        )}${this.#listLayout.call(this, sessionData.clean, "clean")}
+        ${this.#listLayout.call(this, sessionData.overal, "overal")}
+        <div class="sessions__item-extra toggeling"><h5 class="sessions__item-waveheight">Waveheight: ${
+          sessionData.waveheight
+        }M</h5>
+        <h5 class="sessions__item-swellheight">SwellHeight: ${
+          sessionData.swellheight
+        }M</h5>
+<h5 class="sessions__item-wind">Wind: ${sessionData.wind}</h5>
+<h5
+class="sessions__item-direction">Wind Direction: ${
+          sessionData.windDirection
+        }</h5>
 
-                              <div class="sessions__item-image">
-                                  <h5>Picture:</h5>
-                                  <a href="">Image Session</a>
-                              </div>
-
-                              <h5 class="sessions__item-description">Description: ${
-                                sessionData.description
-                              }</h5>
-                              </div>
-                          </div>`
+<div class="sessions__item-image">
+    <h5>Picture:</h5>
+    <a href="">Image Session</a>
+</div>
+<div>
+<h5 class="sessions__item-description"> Description: ${
+          sessionData.description
+        }</h5>
+</div></div>`
       );
     });
   }

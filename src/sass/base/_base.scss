@@ -7,9 +7,15 @@ html {
   font-size: 62.5%;
   height: 100%;
   overflow-y: auto;
+  font-family: "Open Sans", sans-serif;
 }
 
 body {
   min-height: 100%;
-  background-color: #fef1d9;
+  background-color: $color-yellow;
+  overflow: hidden;
+}
+
+.hidden {
+  display: none;
 }

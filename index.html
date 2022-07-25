@@ -10,6 +10,10 @@
         <link rel=" stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
             integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
             crossorigin="" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;700&display=swap" rel="stylesheet">
         <script defer src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
@@ -21,6 +25,8 @@
 
     <body>
 
+
+
         <div class="center">
             <article class="interface">
                 <img class="logo" src="/src/img/CIRCLE 04.png" alt="SurfRate-Logo">
@@ -31,72 +37,97 @@
                 <div class="sessions">
                     <h3 class="sessions__spotname"></h3>
                     <div class="sessions__sessions">
-                        <!-- FORM ADDING NEW SESSIONS(STILL UNDER CONSTRUCTION) -->
-                        <!-- <form class="new__session">
-                            <div>
-                                <label for="date">Date: </label>
-                                <input class="new__session-date" id="date" type="date">
-                            </div> -->
-                        <!-- <div class="new__session-strength">
-                                <h5 class="new__session-rating-header">Strength</h5>
-                                <ul class="rating">
-                                    <li class="rating-item rating-strength active" data-rate="1"></li>
-                                    <li class="rating-item rating-strength" data-rate="2"></li>
-                                    <li class="rating-item rating-strength" data-rate="3"></li>
-                                    <li class="rating-item rating-strength" data-rate="4"></li>
-                                    <li class="rating-item rating-strength" data-rate="5"></li>
-
-                                </ul>
-                            </div>
-                            <div class="new__session-clean">
-                                <h5 class="new__session-rating-header">Clean</h5>
-                                <ul class="rating">
-                                    <li class="rating-item rating-clean" data-rate="1"></li>
-                                    <li class="rating-item rating-clean" data-rate="2"></li>
-                                    <li class="rating-item rating-clean" data-rate="3"></li>
-                                    <li class="rating-item rating-clean" data-rate="4"></li>
-                                    <li class="rating-item rating-clean" data-rate="5"></li>
-
-                                </ul>
-                            </div>
-                            <div class="new__session-overal">
-                                <h5 class="new__session-rating-header">Overal</h5>
-                                <ul class="rating">
-                                    <li class="rating-item rating-condition" data-rate="1"></li>
-                                    <li class="rating-item rating-condition" data-rate="2"></li>
-                                    <li class="rating-item rating-condition" data-rate="3"></li>
-                                    <li class="rating-item rating-condition" data-rate="4"></li>
-                                    <li class="rating-item rating-condition" data-rate="5"></li>
-
-                                </ul>
-                            </div>
-
-                            <div class="new__session-image ">
-                                <h5>Picture:</h5>
-                                <label for="image-upload" class="custom-file-upload ">Select Image</label>
-                                <input class="image-upload" id="image-upload" type="file" accept="image/*" name="image"
-                                    value="search">
-                            </div>
-
-                            <div class="new__session-description">
-                                <h5>Description: </h5>
-                                <input class="new__session-description " type="text" name="" id="">
-                            </div>
-
-                            <button class="new__session-button ">Add Session</button>
-                        </form> -->
-
                     </div>
                 </div>
                 <div class="interface__markup">
-                    <a href="" class="button button__new-spot">Add Spot</a>
+                    <!-- <a href="" class="button button__new-spot">Add Spot</a> -->
                     <a href="" class="button button__new-session">New Session</a>
                 </div>
             </article>
         </div>
 
-        </div>
+        <div class="modal hidden">
+            <a class="button modal__close" href="">X</a>
+            <div class="add__spot hidden">
+                <h4 class="add__spot-header">New Spot</h4>
+                <div class="add__spot-name">
+                    <h5>Spot Name: </h5>
+                    <input class="input add__spot-name-input " type="text" placeholder="The glacier">
+                </div>
+                <div class="add__spot-location">
+                    <h5>Spot Location: </h5>
+                    <input class="input add__spot-location-input" type="text" placeholder="North pool">
+                </div>
+                <a class="add__spot-submit button" href="">Submit</a>
+            </div>
 
+
+
+
+            <div class="add__session hidden">
+
+                <h4 class="add__session-spot">Placeholder spotname</h4>
+
+                <div class="add__session-strength">
+                    <h5>Strength:</h5>
+                    <ul class="add__session-rating">
+                        <li class="add__session-rating-item  add__session-item-strength 
+                            " data-rate="1"></li>
+                        <li class="add__session-rating-item  add__session-item-strength" data-rate="2"></li>
+                        <li class="add__session-rating-item  add__session-item-strength" data-rate="3"></li>
+                        <li class="add__session-rating-item  add__session-item-strength" data-rate="4"></li>
+                        <li class="add__session-rating-item  add__session-item-strength" data-rate="5"></li>
+
+                    </ul>
+
+                </div>
+
+
+
+
+
+                <div class="add__session-clean">
+                    <h5 class="add__spot-clean">clean:</h5>
+                    <ul class="add__session-rating">
+                        <li class="add__session-rating-item   add__session-item-clean" data-rate="1"></li>
+                        <li class="add__session-rating-item   add__session-item-clean" data-rate="2"></li>
+                        <li class="add__session-rating-item   add__session-item-clean" data-rate="3"></li>
+                        <li class="add__session-rating-item   add__session-item-clean" data-rate="4"></li>
+                        <li class="add__session-rating-item   add__session-item-clean" data-rate="5"></li>
+                    </ul>
+                </div>
+
+                <div class="add__session-conditions">
+
+                    <h5 class="add__session-conditions">Overall Conditions: </h5>
+                    <ul class="add__session-rating">
+                        <li class="add__session-rating-item  add__session-item-condition" data-rate="1"></li>
+                        <li class="add__session-rating-item  add__session-item-condition" data-rate="2"></li>
+                        <li class="add__session-rating-item  add__session-item-condition" data-rate="3"></li>
+                        <li class="add__session-rating-item  add__session-item-condition" data-rate="4"></li>
+                        <li class="add__session-rating-item  add__session-item-condition" data-rate="5"></li>
+                    </ul>
+                </div>
+
+                <div class="add__session-info">
+                    <h5 class="add__session-info-header">Additional information:</h5>
+
+                    <textarea name="additional-info" id="add__spot-info-input" class="add__session-info-text" cols="20"
+                        rows="5"></textarea>
+                </div>
+                <!-- <input class="add__spot-info-input" type="text"> -->
+                <div class="add__session-image">
+                    <h5>Add Image: </h5>
+                    <label for="image-upload" class="custom-file-upload">Select Image</label>
+                    <input class="image-upload" id="image-upload" type="file" accept="image/*" name="image"
+                        value="search">
+                    <span class="file-text"></span>
+                </div>
+                <a class="add__session-submit button">Submit</a>
+
+
+            </div>
+        </div>
         <div class="overlay hidden"></div>
     </body>
 
