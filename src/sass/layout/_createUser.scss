@@ -1,0 +1,13 @@
+.create__user {
+  @include modal-layout;
+  grid-template-rows: 1fr 2fr 2fr 2fr;
+
+  &-api {
+    grid-column: 1/-1;
+    width: 73%;
+    &-input {
+      width: 100%;
+    }
+  }
+ 
+}

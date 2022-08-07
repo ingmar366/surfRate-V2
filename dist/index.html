@@ -20,9 +20,6 @@
     </head>
 
     <body>
-
-
-
         <div class="center">
             <article class="interface">
                 <img class="logo" src="/CIRCLE%2004.0a1a7b1a.png" alt="SurfRate-Logo">
@@ -36,16 +33,52 @@
                     </div>
                 </div>
                 <div class="interface__markup">
-                    <!-- <a href="" class="button button__new-spot">Add Spot</a> -->
                     <a href="" class="button button__new-session">New Session</a>
+                    <a href="" class="login__button button">Login</a>
                 </div>
             </article>
         </div>
 
-        <div class="modal hidden">
+        <div class="modal">
             <a class="button modal__close" href="">X</a>
+            <!-- login user -->
+            <div class="user__login">
+                <a class="user__login-new-user button" href="">Create Account</a>
+                <h4 class="modal-header">Login</h4>
+                <div class="user__login-name">
+                    <h5>Username: </h5>
+                    <input class="input user__login-name-input " type="text" placeholder="username">
+                </div>
+                <div class="user__login-password">
+                    <h5>Password </h5>
+                    <input class="input user__login-password-input" type="password" placeholder="password">
+                </div>
+                <a class="user__login-submit button" href="">Submit</a>
+            </div>
+            <!-- create user -->
+            <div class="create__user hidden">
+                <h4 class="modal-header">Create User</h4>
+                <div class="create__user-name">
+                    <h5>Username: </h5>
+                    <input class="input create__user-name-input " type="text" placeholder="username">
+                </div>
+                <div class="create__user-password">
+                    <h5>Password: </h5>
+                    <input class="input create__user-password-input" type="password" placeholder="password">
+                </div>
+                <div class="create__user-api">
+                    <h5>API-Key:</h5>
+                    <input class="input create__user-api-input" type="text" placeholder="9c945fb8-aacd-11ec-a97f-0242ac130002-9c946026-aacd-11ec-a97f-0242ac130002">
+                </div>
+
+                <a class="create__user-submit button" href="">Submit</a>
+            </div>
+
+
+            <!-- new spot -->
+
             <div class="add__spot hidden">
-                <h4 class="add__spot-header">New Spot</h4>
+                <h4 class="modal-header">New Spot</h4>
                 <div class="add__spot-name">
                     <h5>Spot Name: </h5>
                     <input class="input add__spot-name-input " type="text" placeholder="The glacier">
@@ -57,11 +90,8 @@
                 <a class="add__spot-submit button" href="">Submit</a>
             </div>
 
-
-
-
+            <!-- new session -->
             <div class="add__session hidden">
-
                 <h4 class="add__session-spot">Placeholder spotname</h4>
 
                 <div class="add__session-strength">
@@ -73,14 +103,8 @@
                         <li class="add__session-rating-item  add__session-item-strength" data-rate="3"></li>
                         <li class="add__session-rating-item  add__session-item-strength" data-rate="4"></li>
                         <li class="add__session-rating-item  add__session-item-strength" data-rate="5"></li>
-
                     </ul>
-
                 </div>
-
-
-
-
 
                 <div class="add__session-clean">
                     <h5 class="add__spot-clean">clean:</h5>
@@ -94,7 +118,6 @@
                 </div>
 
                 <div class="add__session-conditions">
-
                     <h5 class="add__session-conditions">Overall Conditions: </h5>
                     <ul class="add__session-rating">
                         <li class="add__session-rating-item  add__session-item-condition" data-rate="1"></li>
@@ -107,22 +130,21 @@
 
                 <div class="add__session-info">
                     <h5 class="add__session-info-header">Additional information:</h5>
-
-                    <textarea name="additional-info" id="add__spot-info-input" class="add__session-info-text" cols="20" rows="5"></textarea>
+                    <textarea name="additional-info" id="add__spot-info-input" class="add__session-info-text" cols="20" rows="5">
+                    </textarea>
                 </div>
-                <!-- <input class="add__spot-info-input" type="text"> -->
                 <div class="add__session-image">
                     <h5>Add Image: </h5>
                     <label for="image-upload" class="custom-file-upload">Select Image</label>
                     <input class="image-upload" id="image-upload" type="file" accept="image/*" name="image" value="search">
                     <span class="file-text"></span>
                 </div>
+
                 <a class="add__session-submit button">Submit</a>
-
-
             </div>
         </div>
-        <div class="overlay hidden"></div>
+
+        <div class="overlay"></div>
     </body>
 
 </html>

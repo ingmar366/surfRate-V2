@@ -3,16 +3,17 @@ class SpotView {
   #spotContainer = document.querySelector(`.interface__surfspots`);
 
   displaySpots(spot) {
+    // console.log(spot);
     this.#spotContainer.innerHTML = "";
     // inserting html for every spot that is selected
-    Object.entries(spot.surfspot).forEach((_, ind) => {
+    Object.entries(spot).forEach((item, ind) => {
       const spotStr = `spot` + (ind + 1);
       this.#spotContainer.insertAdjacentHTML(
         `beforeend`,
-        `<div class="surf-spot" action="" data-id="${ind}">
+        `<div class="surf-spot" action="" data-id="${ind + 1}">
         <h3 class="form__spot-name">Name: 
-        ${spot.surfspot[spotStr].name}</h3>
-        <h3 class="form__spot-location">Location: ${spot.surfspot[spotStr].location.name}</h3>
+        ${item[1].spot.name}</h3>
+        <h3 class="form__spot-location">Location: ${item[1].spot.sec_name}</h3>
         </div>`
       );
     });

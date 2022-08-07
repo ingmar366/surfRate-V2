@@ -505,6 +505,7 @@ function hmrAcceptRun(bundle, id) {
 },{}],"aenu9":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _model = require("./model");
+var _helper = require("./helper");
 var _spotView = require("./views/spotView");
 var _spotViewDefault = parcelHelpers.interopDefault(_spotView);
 var _modalView = require("./views/modalView");
@@ -519,124 +520,148 @@ var _markupView = require("./views/markupView");
 var _markupViewDefault = parcelHelpers.interopDefault(_markupView);
 var _addSpotView = require("./views/addSpotView");
 var _addSpotViewDefault = parcelHelpers.interopDefault(_addSpotView);
-////////////////////////////////////////////////////////////
-// SHOW SESSION MENU AND SESSIONS
-const displaySessions = function(selectedSpot) {
-    (0, _sessionViewDefault.default).showContainer();
-    (0, _sessionViewDefault.default).loadSpots(selectedSpot);
+var _loginView = require("./views/loginView");
+var _loginViewDefault = parcelHelpers.interopDefault(_loginView);
+var _createUserView = require("./views/createUserView");
+var _createUserViewDefault = parcelHelpers.interopDefault(_createUserView);
+const closeModal = function(e) {
+    e.preventDefault();
+    (0, _modalViewDefault.default).toggleModal();
+    _helper.hideAllModelContent();
 };
 ////////////////////////////////////////////////////////////
-// MOVE TO CLICKED MARKER LOCATION
+//                                                        //
+//                        LOGIN                           //
+//                                                        //
+////////////////////////////////////////////////////////////
+const loginModalButtonHandler = function(e) {
+    e.preventDefault();
+    const target = e.target.classList;
+    if (target.contains(`user__login-submit`)) loginSubmit();
+    if (target.contains(`user__login-new-user`)) openCreateUser();
+};
+const loginSubmit = async function() {
+    const userInfo = (0, _loginViewDefault.default).getData();
+    const check = await _model.login(userInfo);
+    if (check !== 406) {
+        localStorage.setItem("user", userInfo.username);
+        localStorage.setItem("password", userInfo.password);
+        localStorage.setItem("api", check);
+        _helper.hideAllModelContent();
+        (0, _modalViewDefault.default).toggleModal();
+    }
+};
+const login = function(e) {
+    e.preventDefault();
+    (0, _modalViewDefault.default).toggleModal();
+    _helper.hideAllModelContent();
+    (0, _loginViewDefault.default).showLoginForm();
+};
+////////////////////////////////////////////////////////////
+//                                                        //
+//                     CREATE USER                        //
+//                                                        //
+////////////////////////////////////////////////////////////
+const openCreateUser = function() {
+    _helper.hideAllModelContent();
+    (0, _createUserViewDefault.default).showCreateForm();
+};
+const createUserSubmit = async function(e) {
+    e.preventDefault();
+    const newUserInfo = (0, _createUserViewDefault.default).getData();
+    if (newUserInfo.username, newUserInfo.password, newUserInfo.api === "") return;
+    const key = await _model.createUser(newUserInfo);
+};
+////////////////////////////////////////////////////////////
+//                                                        //
+//                     MAP EVENTS                         //
+//                                                        //
+////////////////////////////////////////////////////////////
+// move to clicked location on left menu
 const moveMapToSpot = function(e) {
     //checking if the selected item is a spot
     if (e.target.parentNode.className !== `surf-spot`) return;
     // get the id number out of selected item
-    const selectedSpotNumber = Number(e.target.parentNode.dataset.id) + 1;
+    const selectedSpotNumber = Number(e.target.parentNode.dataset.id);
     // updating selected spot
     _model.selectedSpot(selectedSpotNumber);
-    const modelSpot = _model.data.surfspot[`spot${selectedSpotNumber}`];
+    const modelSpot = _model.data[selectedSpotNumber];
     //set map to location
     (0, _mapViewDefault.default).setMapToLocation(modelSpot);
     //open corresponding popup
-    (0, _mapViewDefault.default).openMarker(`spot${selectedSpotNumber - 1}`);
+    (0, _mapViewDefault.default).openMarker(`spot${selectedSpotNumber}`);
     //show graphic selected spot
     (0, _spotViewDefault.default).activeSpot(e.target);
     // display the session window and show all the sessions
     displaySessions(modelSpot);
 };
-////////////////////////////////////////////////////////////
-// GET INFO SELECTED MARKER AND SELECT SPOT IN MENU
+let timer; //timer to prefent click error from leaflet
+// get info selected marker and select in spot menu
 const markerClickHandler = function(e) {
     const markerSpot = e.target._popup.options.className.slice(-1);
     (0, _spotViewDefault.default).activeSpot(markerSpot);
     // update current active spot
     _model.selectedSpot(markerSpot);
     //show the sessions connected with the spot
-    displaySessions(_model.data.surfspot[`spot${+markerSpot + 1}`]);
-    (0, _mapViewDefault.default).openMarker(`spot${+markerSpot + 1}`);
+    displaySessions(_model.data[markerSpot]);
+    // small timeout for the popup. A bug in leaflet make every click double click and make it that the popup doesnt show. This popup filters excidental double clicks
+    if (Date.now() >= timer + 1800 || !timer) {
+        console.log(timer);
+        timer = cooldown(markerSpot);
+    }
+};
+const cooldown = function(markerSpot) {
+    (0, _mapViewDefault.default).openMarker(`spot${markerSpot}`);
+    return Date.now();
 };
 ////////////////////////////////////////////////////////////
+//                                                        //
+//                SESSION MENU EVENTS                     //
+//                                                        //
 ////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-//SESSION HANDELING
-//SHOW EXTENDED INFO SESSION
+// display sessions in left menu
+const displaySessions = function(selectedSpot) {
+    (0, _sessionViewDefault.default).showContainer();
+    (0, _sessionViewDefault.default).loadSpots(selectedSpot);
+};
+//show extended info on click session
 const sessionClickHandler = function(e) {
     (0, _sessionViewDefault.default).toggleLongSessionDescription(e.target);
 };
-////////////////////////////////////////////////////////////
-// NEW SESSION CLICK
-const openModalHandler = function(e) {
+// new session button click
+const openModalNewSession = function(e) {
     e.preventDefault();
+    // get data of the current active spot
     const curSpotData = _model.selectedSpotData();
     if (!curSpotData) {
         window.alert(`Select a spot before adding a new session!`);
         return;
     }
+    // check if person succesfully logged in
+    if (!localStorage.getItem("api")) {
+        window.alert(`Login before making a new session`);
+        return;
+    }
+    // show modal and the current data
     (0, _modalViewDefault.default).toggleModal();
     (0, _addSessionViewDefault.default).showSessionForm(curSpotData.name);
 };
-const closeModal = function(e) {
-    e.preventDefault();
-    (0, _modalViewDefault.default).toggleModal();
-    (0, _addSessionViewDefault.default).hideSessionForm();
-    (0, _addSpotViewDefault.default).hideSpotForm();
-};
 ////////////////////////////////////////////////////////////
+//                                                        //
+//                      NEW SESSION                       //
+//                                                        //
 ////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-// CREATE NEW SESSION
-// GET CURRENT DATE
-const getCurrentDate = function() {
-    const date = new Date();
-    const curDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-    return curDate;
-};
-////////////////////////////////////////////////////////////
-// MAKE API CALL FOR CURRENT SELECTED SPOT
-const stormglassAPICall = async function() {
-    try {
-        // getting lat and long from the current selected spot
-        const { lat: curSpotLat , long: curSpotLong  } = _model.data.surfspot[`spot${_model.curSelectedSpot}`].location;
-        // call stormglass api for data
-        const { hours  } = await _model.getSpotData(curSpotLat, curSpotLong);
-        const conditionData = hours[0];
-        return conditionData;
-    } catch (err) {
-        console.log(message.err);
+// event handler to clicks modal session buttons
+const modalClicksSessions = function(e) {
+    const targetEl = e.target;
+    if (targetEl.classList.contains("add__session-rating-item")) (0, _addSessionViewDefault.default).settingStars(targetEl);
+    if (targetEl.classList.contains(`add__session-submit`)) {
+        e.preventDefault();
+        newSessionSubmit(targetEl);
     }
 };
-////////////////////////////////////////////////////////////
-// CALCULATE THE LENGTH OF SESSIONS TO NAME THE NEXT
-const getAmountOfSessions = function() {
-    const amountSessions = `session${Object.keys(_model.data.surfspot[`spot${_model.curSelectedSpot}`].sessions).length + 1}`;
-    return amountSessions;
-};
-////////////////////////////////////////////////////////////
-// GET DATA FROM SOURCES , FORMAT AND UPLOADS DATA TO MODEL
-const formatAndUpload = async function(data) {
-    const conditionData = await stormglassAPICall();
-    const amountSessions = getAmountOfSessions();
-    const curDate = getCurrentDate();
-    const resultObj = {
-        date: curDate,
-        ...conditionData,
-        strength: +data.strength,
-        clean: +data.clean,
-        overal: +data.overal,
-        description: data.description,
-        wind: conditionData.windSpeed.sg,
-        windDirection: conditionData.windDirection.sg,
-        waveheight: conditionData.waveHeight.sg,
-        swellheight: conditionData.swellHeight.sg
-    };
-    // updating data
-    _model.uploadData(resultObj, amountSessions);
-    // refreshing sessions
-    displaySessions(_model.data.surfspot[`spot${_model.curSelectedSpot}`]);
-};
-////////////////////////////////////////////////////////////
-// PROCESS DATA WHEN SUBMIT HAS BEEN CLICKED
-const gettingData = function(e) {
+// validating data out of new session
+const newSessionSubmit = function() {
     // getting the data out of the modal
     const data = (0, _addSessionViewDefault.default).getInputData();
     // checking for valid data
@@ -649,22 +674,53 @@ const gettingData = function(e) {
     (0, _modalViewDefault.default).toggleModal();
     formatAndUpload(data);
 };
-////////////////////////////////////////////////////////////
-// event handler to clicks on modal buttons
-const modalClicks = function(e) {
-    const targetEl = e.target;
-    if (targetEl.classList.contains("add__session-rating-item")) (0, _addSessionViewDefault.default).settingStars(targetEl);
-    if (targetEl.classList.contains(`add__session-submit`)) {
-        e.preventDefault();
-        gettingData(targetEl);
+// get data from stormglass and formats it
+const formatAndUpload = async function(data) {
+    try {
+        const conditionData = await stormglassAPICall();
+        const resultObj = {
+            ...conditionData,
+            strength: +data.strength,
+            clean: +data.clean,
+            overal: +data.overal,
+            description: data.description
+        };
+        // updating data to model
+        const response = await _model.uploadData(resultObj);
+        if (response === 201) {
+            await _model.getData();
+            displaySessions(_model.data[_model.curSelectedSpot]);
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+};
+// make api call for current selected location
+const stormglassAPICall = async function() {
+    try {
+        // getting lat and long from the current selected spot
+        const { lat: curSpotLat , long: curSpotLong  } = _model.data[_model.curSelectedSpot].spot;
+        // call stormglass api for data
+        const { hours  } = await _model.getSpotData(curSpotLat, curSpotLong);
+        const conditionData = hours[0];
+        return conditionData;
+    } catch (err) {
+        console.log(err.message);
     }
 };
 ////////////////////////////////////////////////////////////
+//                                                        //
+//                      NEW SPOT                          //
+//                                                        //
 ////////////////////////////////////////////////////////////
-// CREATE NEW SPOT
+// get clicked location on map
 const getMarkerPosition = function(mapE) {
-    //   returning clicked position on the map
+    if (!localStorage.getItem("user")) {
+        window.alert("Login before Creating a new Spot");
+        return;
+    }
     const { lat , lng  } = mapE.latlng;
+    // open modal window to add spot
     (0, _modalViewDefault.default).toggleModal();
     (0, _addSpotViewDefault.default).showSpotForm();
     // save clicked location in model
@@ -673,310 +729,198 @@ const getMarkerPosition = function(mapE) {
         lng
     ]);
 };
-// get the length amount spots
-const getAmountSurfspots = function() {
-    return Object.keys(_model.data.surfspot).length;
-};
-const submitClickHandler = function(e) {
-    e.preventDefault();
-    //get data out of input fields
-    const data = (0, _addSpotViewDefault.default).getInputData();
-    // validate data
-    if (!data) return;
-    const name = `spot${getAmountSurfspots() + 1}`;
-    _model.newSurfSpot(name, data);
-    (0, _spotViewDefault.default).displaySpots(_model.data);
-    (0, _mapViewDefault.default).displayMarkers(_model.data, markerClickHandler);
-    (0, _modalViewDefault.default).toggleModal();
-    (0, _addSpotViewDefault.default).clearFields();
-    (0, _addSpotViewDefault.default).hideSpotForm();
+const submitClickHandlerSpots = async function(e) {
+    try {
+        e.preventDefault();
+        //get data out of input fields
+        const data = (0, _addSpotViewDefault.default).getInputData();
+        // validate data
+        if (!data) return;
+        const result = await _model.newSurfSpot(data);
+        console.log(result);
+        if (result === 201) {
+            await _model.getData(); //get data from the api to rerender spots
+            (0, _spotViewDefault.default).displaySpots(_model.data);
+            (0, _mapViewDefault.default).displayMarkers(_model.data, markerClickHandler);
+            (0, _modalViewDefault.default).toggleModal();
+            (0, _addSpotViewDefault.default).clearFields();
+            (0, _addSpotViewDefault.default).hideSpotForm();
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
 };
 ////////////////////////////////////////////////////////////
+//                                                        //
+//                       INIT                             //
+//                                                        //
 ////////////////////////////////////////////////////////////
 // initializing basic functionality at the start up of application
 const init = async function() {
     try {
+        (0, _loginViewDefault.default).buttonClick(loginModalButtonHandler);
+        (0, _createUserViewDefault.default).submitHandler(createUserSubmit);
+        (0, _modalViewDefault.default).closeHandler(closeModal);
+        await _model.getData();
         await (0, _mapViewDefault.default).setupMap();
         (0, _spotViewDefault.default).displaySpots(_model.data);
         (0, _spotViewDefault.default).addHandlerClick(moveMapToSpot);
         (0, _mapViewDefault.default).displayMarkers(_model.data, markerClickHandler);
         (0, _mapViewDefault.default).addHandlerClickMap(getMarkerPosition);
         (0, _sessionViewDefault.default).clickHandlerSession(sessionClickHandler);
-        (0, _markupViewDefault.default).newSessionClickHandler(openModalHandler);
-        (0, _modalViewDefault.default).closeHandler(closeModal);
-        (0, _addSessionViewDefault.default).clickHandler(modalClicks);
-        (0, _addSpotViewDefault.default).clickHandler(submitClickHandler);
+        (0, _markupViewDefault.default).newSessionClickHandler(openModalNewSession);
+        (0, _markupViewDefault.default).loginClickHandler(login);
+        (0, _addSessionViewDefault.default).clickHandler(modalClicksSessions);
+        (0, _addSpotViewDefault.default).clickHandler(submitClickHandlerSpots);
     } catch (err) {
         console.log(err.message);
     }
 };
-init();
+init(); //////////////////////////////////////////////////////////////////////
 
-},{"./model":"Y4A21","./views/spotView":"balrh","./views/mapView":"b2AA2","./views/sessionView":"01INf","./views/addSessionView":"6WgH4","./views/markupView":"kBFDp","./views/modalView":"8QpnA","./views/addSpotView":"kqLVa","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
+},{"./model":"Y4A21","./views/spotView":"balrh","./views/modalView":"8QpnA","./views/mapView":"b2AA2","./views/sessionView":"01INf","./views/addSessionView":"6WgH4","./views/markupView":"kBFDp","./views/addSpotView":"kqLVa","./views/loginView":"1Ao0H","./views/createUserView":"kuQ0B","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper":"lVRAz"}],"Y4A21":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "data", ()=>data);
 parcelHelpers.export(exports, "clickLocation", ()=>clickLocation);
 parcelHelpers.export(exports, "curSelectedSpot", ()=>curSelectedSpot);
+parcelHelpers.export(exports, "data", ()=>data);
 parcelHelpers.export(exports, "getSpotData", ()=>getSpotData);
 parcelHelpers.export(exports, "selectedSpot", ()=>selectedSpot);
 parcelHelpers.export(exports, "selectedLocation", ()=>selectedLocation);
 parcelHelpers.export(exports, "selectedSpotData", ()=>selectedSpotData);
 parcelHelpers.export(exports, "uploadData", ()=>uploadData);
 parcelHelpers.export(exports, "newSurfSpot", ()=>newSurfSpot);
-let data = {
-    surfspot: {
-        spot1: {
-            name: `Brown Haven`,
-            location: {
-                name: `Dunbar`,
-                lat: 56.002087,
-                long: -2.516737
-            },
-            sessions: {
-                session1: {
-                    date: "02/02/2022",
-                    strength: 2,
-                    clean: 4,
-                    overal: 3,
-                    waveheight: 1.2,
-                    swellheight: 0.8,
-                    wind: 12,
-                    windDirection: "NW",
-                    description: "filler text"
-                },
-                session2: {
-                    date: "02/02/2022",
-                    strength: 2,
-                    clean: 4,
-                    overal: 3,
-                    waveheight: 1.2,
-                    swellheight: 0.8,
-                    wind: 12,
-                    windDirection: "NW",
-                    description: "filler text"
-                }
-            }
-        },
-        spot2: {
-            name: `petten`,
-            location: {
-                name: `petten`,
-                lat: 52.770033,
-                long: 4.654109
-            },
-            sessions: {}
-        },
-        spot3: {
-            name: `bergen`,
-            location: {
-                name: `bergen aan zee`,
-                lat: 52.661555,
-                long: 4.621055
-            },
-            sessions: {}
-        },
-        spot4: {
-            name: `wijk`,
-            location: {
-                name: `Wijk aan Zee`,
-                lat: 52.472203,
-                long: 4.552814
-            },
-            sessions: {}
-        }
-    },
-    forcast: [
-        {
-            seaLevel: {
-                meto: -1.73,
-                sg: -1.73
-            },
-            secondarySwellDirection: {
-                noaa: 21.34,
-                sg: 21.34
-            },
-            secondarySwellHeight: {
-                noaa: 0.09,
-                sg: 0.09
-            },
-            secondarySwellPeriod: {
-                noaa: 12.02,
-                sg: 12.02
-            },
-            swellDirection: {
-                dwd: 86.74,
-                icon: 81.16,
-                meteo: 72.28,
-                meto: 34.5,
-                noaa: 101.54,
-                sg: 34.5
-            },
-            swellHeight: {
-                dwd: 0.31,
-                icon: 0.27,
-                meteo: 0.03,
-                meto: 0.17,
-                noaa: 0.17,
-                sg: 0.17
-            },
-            swellPeriod: {
-                dwd: 6.16,
-                icon: 6.49,
-                meteo: 3.05,
-                meto: 10.71,
-                noaa: 3.82,
-                sg: 10.71
-            },
-            time: "2022-03-24T11:00:00+00:00",
-            waterTemperature: {
-                meto: 7.26,
-                noaa: 9.65,
-                sg: 7.26
-            },
-            waveDirection: {
-                icon: 81.34,
-                meteo: 53.54,
-                meto: 34,
-                noaa: 46.75,
-                sg: 34
-            },
-            waveHeight: {
-                dwd: 0.31,
-                icon: 0.27,
-                meteo: 0.04,
-                meto: 0.2,
-                noaa: 0.23,
-                sg: 0.2
-            },
-            wavePeriod: {
-                icon: 6.45,
-                meteo: 3.18,
-                meto: 3.47,
-                noaa: 7.15,
-                sg: 3.47
-            },
-            windDirection: {
-                icon: 227.14,
-                noaa: 255.4,
-                sg: 227.14
-            },
-            windDirection1000hpa: {
-                noaa: 269.98,
-                sg: 269.98
-            },
-            windDirection100m: {
-                noaa: 269.98,
-                sg: 269.98
-            },
-            windDirection200hpa: {
-                noaa: 270.12,
-                sg: 270.12
-            },
-            windDirection20m: {
-                noaa: 269.99,
-                sg: 269.99
-            },
-            windDirection30m: {
-                noaa: 269.99,
-                sg: 269.99
-            },
-            windDirection40m: {
-                noaa: 269.98,
-                sg: 269.98
-            },
-            windDirection500hpa: {
-                noaa: 270.04,
-                sg: 270.04
-            },
-            windDirection50m: {
-                noaa: 269.98,
-                sg: 269.98
-            },
-            windDirection800hpa: {
-                noaa: 270,
-                sg: 270
-            },
-            windDirection80m: {
-                noaa: 269.98,
-                sg: 269.98
-            },
-            windSpeed: {
-                icon: 3.01,
-                noaa: 3.43,
-                sg: 3.01
-            },
-            windSpeed1000hpa: {
-                noaa: 4.85,
-                sg: 4.85
-            },
-            windSpeed100m: {
-                noaa: 4.66,
-                sg: 4.66
-            },
-            windSpeed200hpa: {
-                noaa: 8.26,
-                sg: 8.26
-            },
-            windSpeed20m: {
-                noaa: 3.61,
-                sg: 3.61
-            },
-            windSpeed30m: {
-                noaa: 3.94,
-                sg: 3.94
-            },
-            windSpeed40m: {
-                noaa: 4.13,
-                sg: 4.13
-            },
-            windSpeed500hpa: {
-                noaa: 4.17,
-                sg: 4.17
-            },
-            windSpeed50m: {
-                noaa: 4.3,
-                sg: 4.3
-            },
-            windSpeed800hpa: {
-                noaa: 5.44,
-                sg: 5.44
-            },
-            windSpeed80m: {
-                noaa: 4.57,
-                sg: 4.57
-            },
-            windWaveDirection: {
-                dwd: 180,
-                icon: 211.19,
-                meteo: 317.72,
-                meto: 287.6,
-                noaa: 266.25,
-                sg: 287.6
-            },
-            windWaveHeight: {
-                dwd: 0,
-                icon: 0.02,
-                meteo: 0,
-                meto: 0.07,
-                noaa: 0.14,
-                sg: 0.07
-            },
-            windWavePeriod: {
-                dwd: 1,
-                icon: 1.32,
-                meteo: 0,
-                meto: 1.52,
-                noaa: 1.81,
-                sg: 1.52
-            }
-        }, 
-    ]
-};
+parcelHelpers.export(exports, "createUser", ()=>createUser);
+parcelHelpers.export(exports, "login", ()=>login);
+parcelHelpers.export(exports, "getData", ()=>getData);
+parcelHelpers.export(exports, "createSpot", ()=>createSpot);
+var _config = require("./config");
 let clickLocation;
 let curSelectedSpot;
-//API CALL
-//list parameters for api call
+let data;
+const getSpotData = async function(lat, lng) {
+    try {
+        //creating hour time slot for api call
+        const time = Math.floor(Date.now() / 1000);
+        const currentTimeStr = `` + time;
+        const hourAgowStr = `` + (time - 3600);
+        const api = localStorage.getItem("api");
+        const data1 = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${_config.parameters}&start=${hourAgowStr}&end=${currentTimeStr}`, {
+            headers: {
+                Authorization: api
+            }
+        });
+        return data1.json();
+    } catch (err) {
+        console.log(err.message);
+    }
+};
+const selectedSpot = function(selectedSpot1) {
+    curSelectedSpot = selectedSpot1;
+};
+const selectedLocation = function(latlng) {
+    clickLocation = latlng;
+};
+const selectedSpotData = function() {
+    if (!curSelectedSpot) return;
+    return data[curSelectedSpot];
+};
+const uploadData = async function(sessionData) {
+    try {
+        const result = await createSession(sessionData);
+        return result;
+    } catch (err) {
+        return err.message;
+    }
+};
+const newSurfSpot = async function(inputData) {
+    try {
+        const result = await createSpot(inputData[0], inputData[1], clickLocation[0], clickLocation[1]);
+        return result;
+    } catch (err) {
+        return err;
+    }
+};
+const createUser = async function(newUserInfo) {
+    try {
+        const userInfo = JSON.stringify(newUserInfo);
+        const upload = await fetch(`http://127.0.0.1:8000/user?data=${userInfo}`, {
+            method: "POST",
+            header: {
+                "Content-Type": "application/json"
+            }
+        });
+        return upload.json();
+    } catch (err) {
+        return err.message;
+    }
+};
+const login = async function(userInfo) {
+    try {
+        const upload = await fetch(`http://127.0.0.1:8000/user/login?username=${userInfo.username}&password=${userInfo.password}`, {
+            method: "GET",
+            header: {
+                "Content-Type": "application/json"
+            }
+        });
+        return upload.json();
+    } catch (err) {
+        return err.message;
+    }
+};
+const getData = async function() {
+    try {
+        const result = await fetch(`http://127.0.0.1:8000/spot/all`, {
+            method: "GET",
+            header: {
+                "Content-Type": "application/json"
+            }
+        }).then((response)=>response.json());
+        data = result;
+    } catch (err) {
+        return err.message;
+    }
+};
+const createSpot = async function(name, spotName, lat, long) {
+    try {
+        const request = JSON.stringify({
+            name: name,
+            location: [
+                lat,
+                long
+            ],
+            secondName: spotName
+        });
+        const upload = await fetch(`http://127.0.0.1:8000/spot/create?data=${request}`, {
+            method: "POST",
+            header: {
+                "Content-Type": "application/json"
+            }
+        });
+        return upload.json();
+    } catch (err) {
+        return err.message;
+    }
+};
+const createSession = async function(forcastData) {
+    try {
+        const forcastStr = JSON.stringify(forcastData);
+        const response = await fetch(`http://127.0.0.1:8000/session/create/${curSelectedSpot}?forcast=${forcastStr}`, {
+            method: "POST",
+            header: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.json();
+    } catch (err) {
+        return err.message;
+    }
+};
+
+},{"./config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "parameters", ()=>parameters);
 const parameters = [
     `waterTemperature`,
     `wavePeriod`,
@@ -1015,48 +959,6 @@ const parameters = [
     `windDirection200hpa`,
     `seaLevel`, 
 ];
-const getSpotData = async function(lat, lng) {
-    try {
-        //creating hour time slot for api call
-        const time = Math.floor(Date.now() / 1000);
-        const currentTimeStr = `` + time;
-        const hourAgowStr = `` + (time - 3600);
-        const api = `9c945fb8-aacd-11ec-a97f-0242ac130002-9c946026-aacd-11ec-a97f-0242ac130002`;
-        const data1 = await fetch(`https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${parameters}&start=${hourAgowStr}&end=${currentTimeStr}`, {
-            headers: {
-                Authorization: api
-            }
-        });
-        const dataJson = data1.json();
-        return dataJson;
-    } catch (err) {
-        console.log(err.message);
-    }
-};
-const selectedSpot = function(selectedSpot1) {
-    curSelectedSpot = selectedSpot1;
-};
-const selectedLocation = function(latlng) {
-    clickLocation = latlng;
-};
-const selectedSpotData = function() {
-    if (!curSelectedSpot) return;
-    return data.surfspot[`spot${curSelectedSpot}`];
-};
-const uploadData = function(sessionData, session) {
-    data.surfspot[`spot${curSelectedSpot}`].sessions[session] = sessionData;
-};
-const newSurfSpot = function(spotName, inputData) {
-    data.surfspot[spotName] = {
-        name: inputData[0],
-        location: {
-            name: inputData[1],
-            lat: clickLocation[0],
-            long: clickLocation[1]
-        },
-        sessions: {}
-    };
-};
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -1095,14 +997,15 @@ class SpotView {
     //getting as input the data from the model (api) and renders the spots onto the screen
     #spotContainer = document.querySelector(`.interface__surfspots`);
     displaySpots(spot) {
+        // console.log(spot);
         this.#spotContainer.innerHTML = "";
         // inserting html for every spot that is selected
-        Object.entries(spot.surfspot).forEach((_, ind)=>{
+        Object.entries(spot).forEach((item, ind)=>{
             const spotStr = `spot` + (ind + 1);
-            this.#spotContainer.insertAdjacentHTML(`beforeend`, `<div class="surf-spot" action="" data-id="${ind}">
+            this.#spotContainer.insertAdjacentHTML(`beforeend`, `<div class="surf-spot" action="" data-id="${ind + 1}">
         <h3 class="form__spot-name">Name: 
-        ${spot.surfspot[spotStr].name}</h3>
-        <h3 class="form__spot-location">Location: ${spot.surfspot[spotStr].location.name}</h3>
+        ${item[1].spot.name}</h3>
+        <h3 class="form__spot-location">Location: ${item[1].spot.sec_name}</h3>
         </div>`);
         });
     }
@@ -1124,6 +1027,26 @@ class SpotView {
     }
 }
 exports.default = new SpotView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8QpnA":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class ModalView {
+    #modal = document.querySelector(".modal");
+    #overlay = document.querySelector(`.overlay`);
+    #closeButton = document.querySelector(`.modal__close`);
+    toggleModal() {
+        this.#modal.classList.toggle("hidden");
+        this.#overlay.classList.toggle("hidden");
+    }
+    closeHandler(handler) {
+        [
+            this.#overlay,
+            this.#closeButton
+        ].forEach((obj)=>obj.addEventListener(`click`, handler));
+    }
+}
+exports.default = new ModalView();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"b2AA2":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -1170,10 +1093,10 @@ class MapView {
     }
     // displaying all the surfspots that are currently in the data obj
     displayMarkers(surfspots, clickHandler) {
-        const arrSpots = Object.entries(surfspots.surfspot);
+        const arrSpots = Object.entries(surfspots);
         arrSpots.forEach((i, ind)=>{
-            const curLat = i[1].location.lat;
-            const curLng = i[1].location.long;
+            const curLat = i[1].spot.lat;
+            const curLng = i[1].spot.long;
             L.marker([
                 curLat,
                 curLng
@@ -1181,9 +1104,9 @@ class MapView {
                 maxWidth: 250,
                 minWidth: 150,
                 autoClose: true,
-                className: `spot-popup spot${ind}`,
+                className: `spot-popup spot${ind + 1}`,
                 closeOnClick: false
-            })).setPopupContent(`${i[1].location.name}`);
+            })).setPopupContent(`${i[1].spot.name}`);
         });
     }
     // set the map to a given location, for example when a surfspot is clicked.
@@ -1191,8 +1114,8 @@ class MapView {
         if (!this.#map) return;
         // prefents error when a surfspot is clicked but there is not map loaded yet.
         const coords = [
-            spot.location.lat,
-            spot.location.long
+            spot.spot.lat,
+            spot.spot.long
         ];
         this.#map.setView(coords, this.#mapZoomlevel);
     }
@@ -1206,7 +1129,11 @@ class MapView {
         Object.entries(this.#map._layers).forEach((layer)=>{
             const marker = layer[1].dragging;
             if (!marker) return; //checking if marker has a value
-            if (marker._marker._popup.options.className.slice(-5) === currentSpot) marker._marker.openPopup(); // selecting the one that has the same classname and opens the popup from this marker
+            if (marker._marker._popup.options.className.slice(-5) === currentSpot) {
+                marker._marker.openPopup();
+                console.log(marker);
+            }
+        // selecting the one that has the same classname and opens the popup from this marker
         });
     }
 }
@@ -1223,8 +1150,10 @@ class SessionView {
         this.#session.addEventListener(`click`, handler);
     }
     toggleLongSessionDescription(e) {
-        e.closest(".sessions__item").classList.toggle("four-rows");
-        e.closest(".sessions__item").lastElementChild.classList.toggle("toggeling");
+        const closestSessionItem = e.closest(".sessions__item");
+        if (!closestSessionItem) return;
+        closestSessionItem.classList.toggle("four-rows");
+        closestSessionItem.lastElementChild.classList.toggle("toggeling");
     }
     // moves up the container into the map
     showContainer() {
@@ -1235,10 +1164,9 @@ class SessionView {
     }
     // calls functions to render the spots from the model data
     loadSpots(spotData) {
-        console.log(spotData);
         this.#clearSessionContainer();
-        this.#loadHeader(spotData.name);
-        this.#loadItems.call(this, spotData.sessions);
+        this.#loadHeader(spotData.spot.name);
+        this.#loadItems.call(this, spotData);
     }
     //  changes the header name to the name of the currently selected spot
      #loadHeader(name) {
@@ -1260,23 +1188,23 @@ class SessionView {
         return str;
     }
      #loadItems(data) {
-        if (!data.session1) return this.#sessionContainer.insertAdjacentHTML(`afterbegin`, `<h5 class="sessions__no-session">No recorded Sessions! Get your lazy body into the water!`);
-        Object.entries(data).forEach((session)=>{
+        if (!data.sessions) return this.#sessionContainer.insertAdjacentHTML(`afterbegin`, `<h5 class="sessions__no-session">No recorded Sessions! Get your lazy body into the water!`);
+        data.sessions.forEach((session)=>{
             const sessionData = session[1];
-            this.#sessionContainer.insertAdjacentHTML(`afterbegin`, `<div class="sessions__item"> <h4 class="sessions__item-date">${sessionData.date}</h4>${this.#listLayout.call(this, sessionData.strength, "strength")}${this.#listLayout.call(this, sessionData.clean, "clean")}
-        ${this.#listLayout.call(this, sessionData.overal, "overal")}
-        <div class="sessions__item-extra toggeling"><h5 class="sessions__item-waveheight">Waveheight: ${sessionData.waveheight}M</h5>
-        <h5 class="sessions__item-swellheight">SwellHeight: ${sessionData.swellheight}M</h5>
-<h5 class="sessions__item-wind">Wind: ${sessionData.wind}</h5>
+            this.#sessionContainer.insertAdjacentHTML(`afterbegin`, `<div class="sessions__item"> <h4 class="sessions__item-date">${session.date}</h4>${this.#listLayout.call(this, session.strength, "strength")}${this.#listLayout.call(this, session.clean, "clean")}
+        ${this.#listLayout.call(this, session.overal, "overal")}
+        <div class="sessions__item-extra toggeling"><h5 class="sessions__item-waveheight">Waveheight: ${session.waveHeight}M</h5>
+        <h5 class="sessions__item-swellheight">SwellHeight: ${session.swellHeight}M</h5>
+<h5 class="sessions__item-wind">Wind: ${session.windSpeed}</h5>
 <h5
-class="sessions__item-direction">Wind Direction: ${sessionData.windDirection}</h5>
+class="sessions__item-direction">Wind Direction: ${session.windDirection}</h5>
 
 <div class="sessions__item-image">
     <h5>Picture:</h5>
     <a href="">Image Session</a>
 </div>
 <div>
-<h5 class="sessions__item-description"> Description: ${sessionData.description}</h5>
+<h5 class="sessions__item-description"> Description: ${session.description}</h5>
 </div></div>`);
         });
     }
@@ -1346,7 +1274,6 @@ class AddSessionView {
         this.#clearStars("add__session-item-condition");
         this.#clearStars("add__session-item-clean");
         this.#clearText();
-        this.hideSessionForm();
     }
 }
 exports.default = new AddSessionView();
@@ -1356,31 +1283,15 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class MarkupView {
     #newSessionButton = document.querySelector(".button__new-session");
+    #loginButton = document.querySelector(".login__button");
     newSessionClickHandler(handler) {
         this.#newSessionButton.addEventListener(`click`, handler);
     }
+    loginClickHandler(handler) {
+        this.#loginButton.addEventListener(`click`, handler);
+    }
 }
 exports.default = new MarkupView();
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8QpnA":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-class ModalView {
-    #modal = document.querySelector(".modal");
-    #overlay = document.querySelector(`.overlay`);
-    #closeButton = document.querySelector(`.modal__close`);
-    toggleModal() {
-        this.#modal.classList.toggle("hidden");
-        this.#overlay.classList.toggle("hidden");
-    }
-    closeHandler(handler) {
-        [
-            this.#overlay,
-            this.#closeButton
-        ].forEach((obj)=>obj.addEventListener(`click`, handler));
-    }
-}
-exports.default = new ModalView();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kqLVa":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -1425,6 +1336,95 @@ class AddSpotView {
 }
 exports.default = new AddSpotView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["2kSJi","aenu9"], "aenu9", "parcelRequireefef")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Ao0H":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class LoginView {
+    #usernameInput = document.querySelector(`.user__login-name-input`);
+    #passwordInput = document.querySelector(`.user__login-password-input`);
+    #userLogin = document.querySelector(`.user__login`);
+    buttonClick(handler) {
+        this.#userLogin.addEventListener("click", handler);
+    }
+    getData() {
+        const username = this.#usernameInput.value;
+        const password = this.#passwordInput.value;
+        return {
+            username: username,
+            password: password
+        };
+    }
+    hideLoginForm() {
+        this.#userLogin.classList.add("hidden");
+    }
+    showLoginForm() {
+        this.#userLogin.classList.remove("hidden");
+    }
+}
+exports.default = new LoginView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kuQ0B":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class CreateUserView {
+    #username = document.querySelector(".create__user-name-input");
+    #password = document.querySelector(".create__user-password-input");
+    #api = document.querySelector(".create__user-api-input");
+    #submit = document.querySelector(".create__user-submit");
+    #createUser = document.querySelector(".create__user");
+    submitHandler(handler) {
+        this.#submit.addEventListener("click", handler);
+    }
+    getData() {
+        const username = this.#username.value;
+        const password = this.#password.value;
+        const api = this.#api.value;
+        return {
+            username: `${username}`,
+            password: `${password}`,
+            apiKey: `${api}`
+        };
+    }
+    hideCreateForm() {
+        this.#createUser.classList.add("hidden");
+    }
+    showCreateForm() {
+        this.#createUser.classList.remove("hidden");
+    }
+}
+exports.default = new CreateUserView(); // username: username,
+ //       password: password,
+ //       apiKey: api,
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "hideAllModelContent", ()=>hideAllModelContent);
+var _spotView = require("./views/spotView");
+var _spotViewDefault = parcelHelpers.interopDefault(_spotView);
+var _modalView = require("./views/modalView");
+var _modalViewDefault = parcelHelpers.interopDefault(_modalView);
+var _mapView = require("./views/mapView");
+var _mapViewDefault = parcelHelpers.interopDefault(_mapView);
+var _sessionView = require("./views/sessionView");
+var _sessionViewDefault = parcelHelpers.interopDefault(_sessionView);
+var _addSessionView = require("./views/addSessionView");
+var _addSessionViewDefault = parcelHelpers.interopDefault(_addSessionView);
+var _markupView = require("./views/markupView");
+var _markupViewDefault = parcelHelpers.interopDefault(_markupView);
+var _addSpotView = require("./views/addSpotView");
+var _addSpotViewDefault = parcelHelpers.interopDefault(_addSpotView);
+var _loginView = require("./views/loginView");
+var _loginViewDefault = parcelHelpers.interopDefault(_loginView);
+var _createUserView = require("./views/createUserView");
+var _createUserViewDefault = parcelHelpers.interopDefault(_createUserView);
+const hideAllModelContent = function() {
+    (0, _addSessionViewDefault.default).hideSessionForm();
+    (0, _addSpotViewDefault.default).hideSpotForm();
+    (0, _loginViewDefault.default).hideLoginForm();
+    (0, _createUserViewDefault.default).hideCreateForm();
+};
+
+},{"./views/spotView":"balrh","./views/modalView":"8QpnA","./views/mapView":"b2AA2","./views/sessionView":"01INf","./views/addSessionView":"6WgH4","./views/markupView":"kBFDp","./views/addSpotView":"kqLVa","./views/loginView":"1Ao0H","./views/createUserView":"kuQ0B","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["2kSJi","aenu9"], "aenu9", "parcelRequireefef")
 
 //# sourceMappingURL=index.e37f48ea.js.map

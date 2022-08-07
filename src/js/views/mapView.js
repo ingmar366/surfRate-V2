@@ -42,10 +42,10 @@ class MapView {
 
   // displaying all the surfspots that are currently in the data obj
   displayMarkers(surfspots, clickHandler) {
-    const arrSpots = Object.entries(surfspots.surfspot);
+    const arrSpots = Object.entries(surfspots);
     arrSpots.forEach((i, ind) => {
-      const curLat = i[1].location.lat;
-      const curLng = i[1].location.long;
+      const curLat = i[1].spot.lat;
+      const curLng = i[1].spot.long;
       L.marker([curLat, curLng])
         .on("click", clickHandler)
         .addTo(this.#map)
@@ -54,11 +54,11 @@ class MapView {
             maxWidth: 250,
             minWidth: 150,
             autoClose: true,
-            className: `spot-popup spot${ind}`,
+            className: `spot-popup spot${ind + 1}`,
             closeOnClick: false,
           })
         )
-        .setPopupContent(`${i[1].location.name}`);
+        .setPopupContent(`${i[1].spot.name}`);
     });
   }
 
@@ -66,7 +66,8 @@ class MapView {
   setMapToLocation(spot) {
     if (!this.#map) return;
     // prefents error when a surfspot is clicked but there is not map loaded yet.
-    const coords = [spot.location.lat, spot.location.long];
+
+    const coords = [spot.spot.lat, spot.spot.long];
     this.#map.setView(coords, this.#mapZoomlevel);
   }
 
@@ -81,8 +82,11 @@ class MapView {
     Object.entries(this.#map._layers).forEach((layer) => {
       const marker = layer[1].dragging;
       if (!marker) return; //checking if marker has a value
-      if (marker._marker._popup.options.className.slice(-5) === currentSpot)
-        marker._marker.openPopup(); // selecting the one that has the same classname and opens the popup from this marker
+      if (marker._marker._popup.options.className.slice(-5) === currentSpot) {
+        marker._marker.openPopup();
+        console.log(marker);
+      }
+      // selecting the one that has the same classname and opens the popup from this marker
     });
   }
 }

@@ -8,8 +8,10 @@ class SessionView {
   }
 
   toggleLongSessionDescription(e) {
-    e.closest(".sessions__item").classList.toggle("four-rows");
-    e.closest(".sessions__item").lastElementChild.classList.toggle("toggeling");
+    const closestSessionItem = e.closest(".sessions__item");
+    if (!closestSessionItem) return;
+    closestSessionItem.classList.toggle("four-rows");
+    closestSessionItem.lastElementChild.classList.toggle("toggeling");
   }
 
   // moves up the container into the map
@@ -22,10 +24,9 @@ class SessionView {
 
   // calls functions to render the spots from the model data
   loadSpots(spotData) {
-    console.log(spotData);
     this.#clearSessionContainer();
-    this.#loadHeader(spotData.name);
-    this.#loadItems.call(this, spotData.sessions);
+    this.#loadHeader(spotData.spot.name);
+    this.#loadItems.call(this, spotData);
   }
 
   //  changes the header name to the name of the currently selected spot
@@ -57,43 +58,39 @@ class SessionView {
   }
 
   #loadItems(data) {
-    if (!data.session1)
+    if (!data.sessions)
       return this.#sessionContainer.insertAdjacentHTML(
         `afterbegin`,
         `<h5 class="sessions__no-session">No recorded Sessions! Get your lazy body into the water!`
       );
-    Object.entries(data).forEach((session) => {
+    data.sessions.forEach((session) => {
       const sessionData = session[1];
       this.#sessionContainer.insertAdjacentHTML(
         `afterbegin`,
         `<div class="sessions__item"> <h4 class="sessions__item-date">${
-          sessionData.date
+          session.date
         }</h4>${this.#listLayout.call(
           this,
-          sessionData.strength,
+          session.strength,
           "strength"
-        )}${this.#listLayout.call(this, sessionData.clean, "clean")}
-        ${this.#listLayout.call(this, sessionData.overal, "overal")}
+        )}${this.#listLayout.call(this, session.clean, "clean")}
+        ${this.#listLayout.call(this, session.overal, "overal")}
         <div class="sessions__item-extra toggeling"><h5 class="sessions__item-waveheight">Waveheight: ${
-          sessionData.waveheight
+          session.waveHeight
         }M</h5>
         <h5 class="sessions__item-swellheight">SwellHeight: ${
-          sessionData.swellheight
+          session.swellHeight
         }M</h5>
-<h5 class="sessions__item-wind">Wind: ${sessionData.wind}</h5>
+<h5 class="sessions__item-wind">Wind: ${session.windSpeed}</h5>
 <h5
-class="sessions__item-direction">Wind Direction: ${
-          sessionData.windDirection
-        }</h5>
+class="sessions__item-direction">Wind Direction: ${session.windDirection}</h5>
 
 <div class="sessions__item-image">
     <h5>Picture:</h5>
     <a href="">Image Session</a>
 </div>
 <div>
-<h5 class="sessions__item-description"> Description: ${
-          sessionData.description
-        }</h5>
+<h5 class="sessions__item-description"> Description: ${session.description}</h5>
 </div></div>`
       );
     });

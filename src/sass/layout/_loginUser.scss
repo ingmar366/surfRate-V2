@@ -1,0 +1,11 @@
+.user__login {
+  @include modal-layout;
+
+  &-new-user {
+    transform: scale(0.7);
+    grid-row: 1;
+    grid-column: 1;
+    align-self: start;
+    justify-self: start;
+  }
+}

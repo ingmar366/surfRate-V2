@@ -217,6 +217,10 @@ input[type="file"] {
   right: 2%;
 }
 
+.modal-header {
+  grid-area: 1 / 1 / auto / -1;
+}
+
 .sessions__spotname {
   color: #f5f5f5;
   place-self: center;
@@ -235,6 +239,12 @@ input[type="file"] {
   font-size: 1.6rem;
 }
 
+.modal-header {
+  text-transform: uppercase;
+  font-size: 2rem;
+  text-decoration: underline;
+}
+
 .add__session-spot {
   text-transform: uppercase;
   font-size: 1.4rem;
@@ -244,12 +254,6 @@ input[type="file"] {
 .add__session h5 {
   text-transform: uppercase;
   font-size: 1rem;
-}
-
-.add__spot-header {
-  text-transform: uppercase;
-  font-size: 2rem;
-  text-decoration: underline;
 }
 
 .add__spot h5 {
@@ -325,11 +329,52 @@ input[type="file"] {
   transform: translateY(-50%);
 }
 
-.button__new-spot {
+.login__button {
   position: absolute;
   top: 50%;
   left: 11%;
   transform: translateY(-50%);
+}
+
+.create__user {
+  min-height: 50vh;
+  grid-template-rows: 1fr 2fr 2fr 2fr;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+  gap: 2rem;
+  display: grid;
+}
+
+.create__user .button {
+  grid-column: 1 / -1;
+}
+
+.create__user-api {
+  width: 73%;
+  grid-column: 1 / -1;
+}
+
+.create__user-api-input {
+  width: 100%;
+}
+
+.user__login {
+  min-height: 50vh;
+  grid-template-rows: 1fr 2fr 2fr;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+  gap: 2rem;
+  display: grid;
+}
+
+.user__login .button {
+  grid-column: 1 / -1;
+}
+
+.user__login-new-user {
+  grid-area: 1 / 1;
+  place-self: start;
+  transform: scale(.7);
 }
 
 .add__session {
@@ -457,25 +502,20 @@ input[type="file"] {
 
 .add__spot {
   min-height: 50vh;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 2fr 2fr;
   grid-template-columns: 1fr 1fr;
-  place-items: start center;
+  place-items: center;
   gap: 2rem;
   display: grid;
 }
 
-.add__spot-header {
+.add__spot .button {
   grid-column: 1 / -1;
 }
 
 .add__spot h5 {
   margin-right: 1rem;
   display: inline-block;
-}
-
-.add__spot-submit {
-  grid-column: 1 / -1;
-  align-self: end;
 }
 
 * {
